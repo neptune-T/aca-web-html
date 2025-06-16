@@ -1,9 +1,14 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
 
-const nextConfig: NextConfig = {
-  /* config options here */
-  reactStrictMode: true,
+const isProd = process.env.NODE_ENV === 'production'
+const repoName = 'aca-web-html'
+
+const nextConfig = {
+  output: 'export',
+  assetPrefix: isProd ? `/${repoName}/` : '',
+  basePath: isProd ? `/${repoName}` : '',
   images: {
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: 'https',
@@ -13,6 +18,12 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Your existing config below
+  compiler: {
+    // Enables the styled-components SWC transform
+    styledComponents: true,
+  },
+  reactStrictMode: true,
 };
 
-export default nextConfig;
+module.exports = nextConfig;
