@@ -34,13 +34,9 @@ const wordsData = [
   { text: 'Rademacher Complexity', size: 12 },
   { text: 'VC Dimension', size: 12 },
   { text: 'Metric Space', size: 12 },
-  { text: 'Theoretical Bounds', size: 12 }
+  { text: 'Theoretical Bounds', size: 12 },
+  { text: 'Neural Networks', size: 14 },
 ];
-
-interface WordCloudProps {
-  width: number;
-  height: number;
-}
 
 const WordCloudHero: React.FC = () => {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -59,8 +55,8 @@ const WordCloudHero: React.FC = () => {
         .padding(10)
         .rotate(() => 0)
         .font('Inter, sans-serif')
-        .fontSize((d: any) => d.size)
-        .on('end', (words: Word[]) => {
+        .fontSize(d => d.size!)
+        .on('end', (words: d3Cloud.Word[]) => {
           if (!svgRef.current) return;
 
           const svg = d3.select(svgRef.current)
@@ -72,12 +68,12 @@ const WordCloudHero: React.FC = () => {
           svg.selectAll('text')
             .data(words)
             .enter().append('text')
-            .style('font-size', (d: any) => `${d.size}px`)
+            .style('font-size', d => `${d.size}px`)
             .style('font-family', 'Inter, sans-serif')
             .style('fill', '#002FA7') // Klein Blue
             .attr('text-anchor', 'middle')
             .attr('transform', d => `translate(${d.x},${d.y})rotate(${d.rotate})`)
-            .text((d: any) => d.text)
+            .text(d => d.text!)
             .style('cursor', 'pointer')
             .on('mouseover', function() {
               d3.select(this).transition().duration(200).style('fill', '#8A0000'); // Peking Red

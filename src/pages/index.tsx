@@ -32,7 +32,7 @@ const Home = () => {
                   <p className="text-gray-600 leading-relaxed">
                       My research focuses on the intersection of artificial intelligence and cognitive science, 
                       exploring how computational models can enhance our understanding of human learning processes. 
-                      I'm particularly interested in neural-symbolic integration and knowledge representation.
+                      I&apos;m particularly interested in neural-symbolic integration and knowledge representation.
                   </p>
               </div>
               <div>
@@ -49,15 +49,15 @@ const Home = () => {
               <h3 className="text-2xl font-semibold mb-4 text-gray-800">Selected Publications</h3>
               <ul className="space-y-4">
                   <li className="border-l-4 pl-4 border-klein-blue/50">
-                      <p className="font-medium text-gray-800">"Cognitive Architectures for Explainable AI"</p>
+                      <p className="font-medium text-gray-800">&quot;Cognitive Architectures for Explainable AI&quot;</p>
                       <p className="text-gray-500">Nature Machine Intelligence, 2023</p>
                   </li>
                   <li className="border-l-4 pl-4 border-klein-blue/50">
-                      <p className="font-medium text-gray-800">"Neural-Symbolic Integration in Large Language Models"</p>
+                      <p className="font-medium text-gray-800">&quot;Neural-Symbolic Integration in Large Language Models&quot;</p>
                       <p className="text-gray-500">AAAI Conference, 2022</p>
                   </li>
                   <li className="border-l-4 pl-4 border-klein-blue/50">
-                      <p className="font-medium text-gray-800">"Knowledge Representation in Hybrid Learning Systems"</p>
+                      <p className="font-medium text-gray-800">&quot;Knowledge Representation in Hybrid Learning Systems&quot;</p>
                       <p className="text-gray-500">Journal of Artificial Intelligence Research, 2021</p>
                   </li>
               </ul>
