@@ -1,29 +1,16 @@
-/** @type {import('next').NextConfig} */
+import type { NextConfig } from 'next';
 
-const isProd = process.env.NODE_ENV === 'production'
-const repoName = 'aca-web-html'
+const isProd = process.env.NODE_ENV === 'production';
+const repoName = 'aca-web-html';
 
-const nextConfig = {
+const nextConfig: NextConfig = {
   output: 'export',
-  assetPrefix: isProd ? `/${repoName}/` : '',
-  basePath: isProd ? `/${repoName}` : '',
+  assetPrefix: isProd ? `/${repoName}/` : undefined,
+  basePath: isProd ? `/${repoName}` : undefined,
   images: {
     unoptimized: true,
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-        port: '',
-        pathname: '/**',
-      },
-    ],
-  },
-  // Your existing config below
-  compiler: {
-    // Enables the styled-components SWC transform
-    styledComponents: true,
   },
   reactStrictMode: true,
 };
 
-module.exports = nextConfig;
+export default nextConfig;
