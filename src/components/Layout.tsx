@@ -23,16 +23,27 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   };
 
   return (
-    <>
-      <AnimatePresence>
-        {showIntro && <IntroAnimation onAnimationComplete={handleAnimationComplete} />}
-      </AnimatePresence>
-      <div className="flex flex-col min-h-screen">
-        <Header />
-        <main className="flex-grow">{children}</main>
-        <Footer />
+    <div className="relative min-h-screen">
+      {/* Blurred Background */}
+      <div
+        className="fixed inset-0 z-[-1] bg-cover bg-center"
+        style={{ backgroundImage: "url('/img/1.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black/30 backdrop-blur-md"></div>
       </div>
-    </>
+      
+      {/* Page Content */}
+      <main className="relative z-10">
+        <AnimatePresence>
+          {showIntro && <IntroAnimation onAnimationComplete={handleAnimationComplete} />}
+        </AnimatePresence>
+        <div className="flex flex-col min-h-screen">
+          <Header />
+          <main className="flex-grow">{children}</main>
+          <Footer />
+        </div>
+      </main>
+    </div>
   );
 };
 
