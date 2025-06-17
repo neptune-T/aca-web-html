@@ -6,6 +6,9 @@ import Footer from './Footer';
 import IntroAnimation from './IntroAnimation';
 import { AnimatePresence } from 'framer-motion';
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const backgroundImageUrl = `${basePath}/img/1.jpg`;
+
 interface LayoutProps {
   children: ReactNode;
 }
@@ -29,7 +32,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       {/* Blurred Background */}
       <div
         className="fixed inset-0 z-[-1] bg-cover bg-center"
-        style={{ backgroundImage: "url('/img/1.jpg')" }}
+        style={{ backgroundImage: `url(${backgroundImageUrl})` }}
       >
         <div className="absolute inset-0 bg-black/30 backdrop-blur-md"></div>
       </div>
