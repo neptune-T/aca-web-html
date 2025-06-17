@@ -5,7 +5,9 @@ import Header from './Header';
 import Footer from './Footer';
 import IntroAnimation from './IntroAnimation';
 import { AnimatePresence } from 'framer-motion';
-import { useRouter } from 'next/router';
+import nextConfig from '../../next.config.mjs';
+
+const backgroundImageUrl = `${nextConfig.basePath}/img/1.jpg`;
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,8 +15,6 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true);
-  const router = useRouter();
-  const backgroundImageUrl = `${router.basePath}/img/1.jpg`;
 
   useEffect(() => {
     if (sessionStorage.getItem('introPlayed')) {
