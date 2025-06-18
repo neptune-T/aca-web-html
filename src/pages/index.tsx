@@ -35,24 +35,26 @@ const Home = () => {
               <div>
                   <h3 className="text-2xl font-semibold mb-4 text-gray-100">Research Interests</h3>
                   <p className="text-gray-300 leading-relaxed">
-                      My research focuses on the intersection of artificial intelligence and cognitive science, 
-                      exploring how computational models can enhance our understanding of human learning processes. 
-                      I&apos;m particularly interested in neural-symbolic integration and knowledge representation.
+                    My research interests lie in the theoretical foundations and structural mechanisms of generative modeling, particularly at the intersection of mathematics and Machine learning. 
+
+                    Specifically, I study diffusion models and Autoregressive models from a mathematical perspective, focusing on their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. I am intrigued by their capacity for structure-aware generation, and I have explored both token-based and continuous-space implementations.
+
+                    Ultimately, I aim to contribute to the development of mathematically grounded, physically coherent, and structurally expressive generative systems—ones that combine rigorous modeling with creative intelligence.
                   </p>
               </div>
               <div>
                   <h3 className="text-2xl font-semibold mb-4 text-gray-100">Biography</h3>
                   <p className="text-gray-300 leading-relaxed">
-                      I received my Ph.D. from Peking University, where I worked on developing novel frameworks 
-                      for machine learning interpretability. Prior to that, I completed my undergraduate studies 
-                      at Tsinghua University with honors in Computer Science and Cognitive Psychology.
+                  I am currently an undergraduate student majoring in Physical Modeling and Intelligent Engineering, with a comprehensive academic background in mathematics, physics, materials science, and computer science. This multidisciplinary training has equipped me with a solid foundation in quantitative analysis and cross-scale system modeling.
+
+                  I am particularly interested in theoretically grounded artificial intelligence, and I approach generative modeling through the lens of mathematical structures, and dynamical processes. I have studied Markov processes, diffusion equations, Boltzmann statistics, Lagrangian mechanics, and ordinary differential equations, and I am currently exploring convex optimization theory and its implications for generalization in deep generative models.
                   </p>
               </div>
           </motion.div>
           
           <motion.div className="mb-16" variants={fadeInVariants}>
               <h3 className="text-2xl font-semibold mb-4 text-gray-100">Selected Publications</h3>
-              <ul className="space-y-4">
+              {/* <ul className="space-y-4">
                   <li className="border-l-4 pl-4 border-klein-blue/70">
                       <p className="font-medium text-gray-200">&quot;Cognitive Architectures for Explainable AI&quot;</p>
                       <p className="text-gray-400">Nature Machine Intelligence, 2023</p>
@@ -65,16 +67,16 @@ const Home = () => {
                       <p className="font-medium text-gray-200">&quot;Knowledge Representation in Hybrid Learning Systems&quot;</p>
                       <p className="text-gray-400">Journal of Artificial Intelligence Research, 2021</p>
                   </li>
-              </ul>
+              </ul> */}
           </motion.div>
           
           <motion.div variants={fadeInVariants}>
               <h3 className="text-2xl font-semibold mb-4 text-gray-100">Affiliations</h3>
               <div className="flex flex-wrap gap-4">
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Peking University</div>
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Tsinghua University</div>
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">MIT Media Lab (Visiting)</div>
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Stanford AI Lab (Visiting)</div>
+                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Peking University (Visiting)</div>
+                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Institute of Automation，Chinese Academy of Sciences (Visiting)</div>
+                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Nanjing University 
+                  </div>
               </div>
           </motion.div>
         </div>
