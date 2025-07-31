@@ -23,7 +23,7 @@ const About = () => {
           </h2>
           <div className="space-y-4">
             <div className="p-4 border-l-4 border-klein-blue bg-black/20 backdrop-blur-sm rounded-r-lg">
-              <p className="font-semibold text-lg text-gray-100">National Bronze Medal</p>
+              <p className="font-semibold text-lg text-gray-100">National Silver Medal</p>
               <p className="text-gray-400">Chinese Mathematical Olympiad (CMO), 2021</p>
             </div>
             <div className="p-4 border-l-4 border-pku-red bg-black/20 backdrop-blur-sm rounded-r-lg">
