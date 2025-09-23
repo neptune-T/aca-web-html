@@ -35,19 +35,18 @@ const Home = () => {
               <div>
                   <h3 className="text-2xl font-semibold mb-4 text-gray-100">Research Interests</h3>
                   <p className="text-gray-300 leading-relaxed">
-                    My research interests lie in the theoretical foundations and structural mechanisms of generative modeling, particularly at the intersection of mathematics and Machine learning. 
+                    
 
-                    Specifically, I study diffusion models and Autoregressive models from a mathematical perspective, focusing on their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. I am intrigued by their capacity for structure-aware generation, and I have explored both token-based and continuous-space implementations.
+                    My research interests lie in the theoretical foundations of generative modeling and their application to creating structurally coherent and physically plausible content. I approach this from a mathematical perspective, specifically studying diffusion and autoregressive models through their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. My initial focus is on applying these principles to enhance structure-aware image generation, ensuring synthesized images are not just visually convincing but also compositionally sound. Building upon this, I extend these concepts from 2D to 3D, aiming to develop generative systems that understand the physical world. I am particularly intrigued by creating physically-grounded 3D models that possess an intrinsic understanding of their own geometry and material properties, which I see as a crucial step towards realistically modeling Human-Object Interaction (HOI). By ensuring models are grounded in physical reality, we can better simulate how objects respond to interaction. This same principle extends to resolving key challenges in video generation, where ensuring long-term temporal consistency remains a significant hurdle. My ultimate ambition is to contribute to the development of World Models by creating generative systems that unify rigorous mathematical modeling with a deep, intuitive grasp of physical dynamics and creative intelligence.
 
-                    Ultimately, I aim to contribute to the development of mathematically grounded, physically coherent, and structurally expressive generative systems—ones that combine rigorous modeling with creative intelligence.
                   </p>
               </div>
               <div>
                   <h3 className="text-2xl font-semibold mb-4 text-gray-100">Biography</h3>
                   <p className="text-gray-300 leading-relaxed">
-                  I am currently an undergraduate student majoring in Physical Modeling and Intelligent Engineering, with a comprehensive academic background in mathematics, physics, materials science, and computer science. This multidisciplinary training has equipped me with a solid foundation in quantitative analysis and cross-scale system modeling.
+                  I am an undergraduate with a dual academic focus in Computer Science and a physics-intensive Materials Science program. My passion for physics lies in understanding complex systems by deriving their behavior from first principles. I particularly enjoy rigorously working through foundational derivations, from using statistical mechanics to derive the Maxwell-Boltzmann distribution and Planck's law of black-body radiation, to exploring the fundamental postulates that lead to the Schrödinger equation in quantum mechanics. During my sophomore year, I delved into foundational computer science through hands-on systems projects. In compilers, I implemented a miniature front-end pipeline that transforms source code into an Abstract Syntax Tree (AST) and then into an intermediate representation, upon which I applied semantic analysis and basic optimizations. In operating systems, I extended the xv6 kernel through a series of experiments, engineering core functionalities such as copy-on-write fork to optimize memory usage, as well as sophisticated process schedulers and thread pool optimizations to ensure fair resource allocation under concurrent workloads. Over the past two years, my focus has converged on the intersection of machine learning, mathematical reasoning, and interactive 3D generation. I have explored the theoretical underpinnings of diffusion models by investigating concepts such as Schrödinger Bridges with my knowledge of mathematical statistics. More recently, my work has shifted towards application, where I am exploring 3D interactivity from a physics-based perspective. My current goal is to develop AI systems that can understand and interact with the world in a physically coherent manner.
 
-                  I am particularly interested in theoretically grounded artificial intelligence, and I approach generative modeling through the lens of mathematical structures, and dynamical processes. I have studied Markov processes, diffusion equations, Boltzmann statistics, Lagrangian mechanics, and ordinary differential equations, and I am currently exploring convex optimization theory and its implications for generalization in deep generative models.
+                  
                   </p>
               </div>
           </motion.div>
@@ -75,8 +74,6 @@ const Home = () => {
               <div className="flex flex-wrap gap-4">
                   <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Peking University (Visiting)</div>
                   <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Institute of Automation，Chinese Academy of Sciences (Visiting)</div>
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Nanjing University 
-                  </div>
               </div>
           </motion.div>
         </div>
