@@ -1,16 +1,104 @@
 import Header from '@/components/Header';
+import { getSortedPapersData } from '@/lib/papers';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { SiArxiv, SiGithub, SiHuggingface } from 'react-icons/si';
 
-const Papers = () => {
-  return (
-    <div>
-      <Header />
-      <main className="pt-24 container mx-auto px-6">
-        <h1 className="text-4xl font-bold font-ibm-plex-serif text-klein-blue">Papers</h1>
-        <p className="mt-4 text-lg text-gray-600">Summaries and reviews of academic papers.</p>
-        {/* Add paper list or cards here */}
-      </main>
-    </div>
-  );
+export async function getStaticProps() {
+  const allPapersData = getSortedPapersData();
+  return {
+    props: {
+      allPapersData,
+    },
+  };
+}
+
+type Paper = {
+  id: string;
+  title: string;
+  image: string;
+  summary: string;
+  authors: string;
+  venue: string;
+  url?: string;
+  arxiv_url?: string;
+  github_url?: string;
+  huggingface_url?: string;
 };
 
-export default Papers; 
+export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] }) {
+  return (
+    <div className="py-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        <header className="text-center mb-16">
+          <motion.h1 
+            className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            My Papers
+          </motion.h1>
+          <motion.p 
+            className="mt-6 max-w-2xl mx-auto text-xl text-white"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            Summaries and reviews of academic papers in Generative AI.
+          </motion.p>
+        </header>
+
+        <main>
+          <ul className="space-y-8">
+            {allPapersData.map(({ id, title, image, url, arxiv_url, github_url, huggingface_url, summary, authors, venue }, index) => (
+              <motion.li
+                key={id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
+              >
+                <div className="block p-3 rounded-lg backdrop-blur-[20px] border-none transition-all duration-300 hover:shadow-md hover:bg-[rgba(156, 95, 95, 0.65)] hover:border-gray-700">
+                  <div className="flex flex-col md:flex-row items-start md:items-center pl-5">
+                    <div className="md:w-1/3 mb-4 md:mb-0 md:pr-6">
+                      <img src={image} alt={title} className="w-full h-auto rounded-md shadow-sm" />
+                    </div>
+                    <div className="md:w-2/3">
+                      {url ? (
+                        <a href={url} target="_blank" rel="noopener noreferrer" className="text-2xl font-bold text-gray-100 mb-1 hover:text-blue-300">
+                          {title}
+                        </a>
+                      ) : (
+                        <h2 className="text-2xl font-bold text-gray-100 mb-1">{title}</h2>
+                      )}
+                      <p className="text-sm text-gray-300 mt-1">{summary}</p>
+                      <p className="text-sm text-indigo-300 mt-1">Authors: {authors}</p>
+                      <p className="text-sm text-purple-400 mt-1">Venue: {venue}</p>
+                      <div className="flex mt-2">
+                        {arxiv_url && (
+                          <a href={arxiv_url} target="_blank" rel="noopener noreferrer" className="mr-4 text-gray-400 hover:text-red-500">
+                            <SiArxiv className="text-xl" />
+                          </a>
+                        )}
+                        {github_url && (
+                          <a href={github_url} target="_blank" rel="noopener noreferrer" className="mr-4 text-gray-400 hover:text-gray-800">
+                            <SiGithub className="text-xl" />
+                          </a>
+                        )}
+                        {huggingface_url && (
+                          <a href={huggingface_url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-orange-500">
+                            <SiHuggingface className="text-xl" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </motion.li>
+            ))}
+          </ul>
+        </main>
+      </div>
+    </div>
+  );
+} 
