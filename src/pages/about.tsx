@@ -162,11 +162,13 @@ const About = () => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+
     const loadMaps = async () => {
       try {
         const [worldRes, chinaRes] = await Promise.all([
-          fetch('/world.json'),
-          fetch('/china.json')
+          fetch(`${basePath}/world.json`),
+          fetch(`${basePath}/china.json`)
         ]);
         
         if (!worldRes.ok || !chinaRes.ok) throw new Error('Failed to fetch map data');

@@ -16,4 +16,13 @@ const nextConfig = {
   },
 };
 
+module.exports = {
+  basePath: '/aca-web-html',
+  assetPrefix: '/aca-web-html/',
+  images: {
+    unoptimized: true,
+  },
+  output: 'export',
+};
+
 export default nextConfig; 
