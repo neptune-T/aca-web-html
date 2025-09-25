@@ -9,7 +9,10 @@ import { useEffect, useState, Suspense, useRef } from 'react';
 const EChartsReactCore = dynamic(() => import('echarts-for-react').then(mod => mod.default), { ssr: false });
 
 // 示例数据 - 去过的地方（国家和中国省份）
-const visitedPlaces = {
+const visitedPlaces: {
+  world: Record<string, string[]>;
+  china: Record<string, string[]>;
+} = {
   // 世界地图数据 - 国家级别
   world: {
     2022: ['China', 'Japan'],
@@ -27,7 +30,10 @@ const visitedPlaces = {
 };
 
 // 地点详细信息
-const placeDetails = {
+const placeDetails: {
+  world: Record<string, { description: string; visits: number }>;
+  china: Record<string, { description: string; visits: number }>;
+} = {
   // 国家信息
   world: {
     'China': { description: '商务旅行和旅游', visits: 5 },
@@ -65,13 +71,12 @@ const About = () => {
 
   // 获取所有可用年份
   const allYears = Object.keys(visitedPlaces.world).sort();
-  const currentYearIndex = allYears.indexOf(currentYear);
 
   // 动态生成地图配置
   const getMapOption = () => {
     const mapType = currentMap;
     const places = visitedPlaces[mapType][currentYear] || [];
-    const mapData = places.map(name => ({
+    const mapData = places.map((name: string) => ({
       name,
       value: 1,
       ...placeDetails[mapType][name]
@@ -233,7 +238,7 @@ const About = () => {
 
         {/* 旅行地图部分 */}
         <section className="mb-12 bg-black/20 backdrop-blur-sm p-8 rounded-lg">
-          <h2 className="text-3xl font-bold text-gray-100 mb-6">Places I've Visited</h2>
+          <h2 className="text-3xl font-bold text-gray-100 mb-6">Places I&apos;ve Visited</h2>
           
           {/* 地图切换选项卡 */}
           <div className="flex mb-6 border-b border-gray-700">
@@ -302,8 +307,8 @@ const About = () => {
                   {/* 时间轴点 */}
                   <button
                     onClick={() => setCurrentYear(year)}
-                    onMouseEnter={() => setHoveredYear(year)}
-                    onMouseLeave={() => setHoveredYear(null)}
+                    onMouseEnter={() => {}}
+                    onMouseLeave={() => {}}
                     className={`relative z-10 w-6 h-6 rounded-full transition-all duration-300 ${
                       currentYear === year 
                         ? 'bg-blue-500 shadow-lg shadow-blue-500/50 scale-125' 
@@ -391,7 +396,7 @@ const About = () => {
             </h3>
             <div className="bg-gray-900/50 rounded-lg p-4">
               <div className="flex flex-wrap gap-2">
-                {(visitedPlaces[currentMap][currentYear] || []).map((place, index) => (
+                {(visitedPlaces[currentMap][currentYear] || []).map((place: string, index) => (
                   <div 
                     key={index}
                     className={`flex items-center py-2 px-3 rounded transition-colors cursor-pointer ${
