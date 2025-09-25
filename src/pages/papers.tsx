@@ -1,8 +1,7 @@
-import Header from '@/components/Header';
 import { getSortedPapersData } from '@/lib/papers';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { SiArxiv, SiGithub, SiHuggingface } from 'react-icons/si';
+import Image from 'next/image';
 
 export async function getStaticProps() {
   const allPapersData = getSortedPapersData();
@@ -61,7 +60,7 @@ export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] 
                 <div className="block p-3 rounded-lg backdrop-blur-[20px] border-none transition-all duration-300 hover:shadow-md hover:bg-[rgba(156, 95, 95, 0.65)] hover:border-gray-700">
                   <div className="flex flex-col md:flex-row items-start md:items-center pl-5">
                     <div className="md:w-1/3 mb-4 md:mb-0 md:pr-6">
-                      <img src={image} alt={title} className="w-full h-auto rounded-md shadow-sm" />
+                      <Image src={image} alt={title} width={400} height={300} className="w-full h-auto rounded-md shadow-sm" />
                     </div>
                     <div className="md:w-2/3">
                       {url ? (

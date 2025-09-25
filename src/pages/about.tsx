@@ -60,7 +60,6 @@ const About = () => {
   const [currentYear, setCurrentYear] = useState('2024');
   const [currentMap, setCurrentMap] = useState<'world' | 'china'>('world');
   const [mapLoaded, setMapLoaded] = useState(false);
-  const [hoveredYear, setHoveredYear] = useState<string | null>(null);
   const [hoveredPlace, setHoveredPlace] = useState<string | null>(null);
   const timelineRef = useRef<HTMLDivElement>(null);
 
@@ -91,7 +90,7 @@ const About = () => {
         borderColor: '#777',
         borderWidth: 1,
         textStyle: { color: '#fff' },
-        formatter: (params: any) => {
+        formatter: (params: { name: string; data?: { description: string; visits: number } }) => {
           const { name, data } = params;
           if (data) {
             return `
@@ -186,7 +185,7 @@ const About = () => {
 
   // 处理地图事件
   const onChartEvents = {
-    mouseover: (params: any) => {
+    mouseover: (params: { name: string; data?: unknown }) => {
       if (params.data) {
         setHoveredPlace(params.name);
       }
