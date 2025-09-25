@@ -23,6 +23,7 @@ type Paper = {
   arxiv_url?: string;
   github_url?: string;
   huggingface_url?: string;
+  gifUrl?: string; // 添加 GIF 图片字段
 };
 
 export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] }) {
@@ -50,7 +51,19 @@ export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] 
 
         <main>
           <ul className="space-y-8">
-            {allPapersData.map(({ id, title, image, url, arxiv_url, github_url, huggingface_url, summary, authors, venue }, index) => (
+            {allPapersData.map(({ 
+              id, 
+              title, 
+              image, 
+              url, 
+              arxiv_url, 
+              github_url, 
+              huggingface_url, 
+              summary, 
+              authors, 
+              venue,
+              gifUrl // 添加 GIF 图片字段
+            }, index) => (
               <motion.li
                 key={id}
                 initial={{ opacity: 0, y: 20 }}
@@ -92,6 +105,18 @@ export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] 
                       </div>
                     </div>
                   </div>
+                  
+                  {/* 添加 GIF 展示区域 */}
+                  {gifUrl && (
+                    <div className="mt-4 px-5">
+                      <img 
+                        src={gifUrl} 
+                        alt={`${title} 演示`} 
+                        className="rounded-lg shadow-lg w-full max-w-2xl mx-auto"
+                        loading="lazy"
+                      />
+                    </div>
+                  )}
                 </div>
               </motion.li>
             ))}
@@ -100,4 +125,4 @@ export default function Papers({ allPapersData = [] }: { allPapersData: Paper[] 
       </div>
     </div>
   );
-} 
+}

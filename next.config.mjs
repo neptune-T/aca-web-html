@@ -5,24 +5,16 @@ const repoName = '/aca-web-html';
 
 const nextConfig = {
   output: 'export',
-  // Set basePath and assetPrefix only for production builds
   basePath: isProd ? repoName : '',
   assetPrefix: isProd ? `${repoName}/` : '',
   images: {
-    unoptimized: true,
+    unoptimized: true, // 必须设置为 true 以支持静态导出
   },
   env: {
     NEXT_PUBLIC_BASE_PATH: isProd ? repoName : '',
   },
+  // 添加以下配置解决 GitHub Pages 路由问题
+  trailingSlash: true,
 };
 
-module.exports = {
-  basePath: '/aca-web-html',
-  assetPrefix: '/aca-web-html/',
-  images: {
-    unoptimized: true,
-  },
-  output: 'export',
-};
-
-export default nextConfig; 
+export default nextConfig;
