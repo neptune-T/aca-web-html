@@ -4,13 +4,67 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 学术风格配色方案 */
 :root {
-  --color-primary: #ffffff;
-  --color-secondary: #1a1a1a;
-  --color-accent: #3498db;
-  --color-text: #e0e0e0;
-  --color-background: url('/img/1.png');
-  --color-glass: rgba(255, 255, 255, 0.1);
+  --primary-text: #1a202c;
+  --secondary-text: #4a5568;
+  --accent-blue: #2b6cb0;
+  --code-bg: #2d3748;
+  --code-text: #e2e8f0;
+  --formula-color: #1e40af;
+  --highlight: #fef5e7;
+  --border: #e2e8f0;
+  --old-red: #8A0000; 
+}
+
+/* 自定义 prose 样式 */
+.prose {
+  color: var(--primary-text);
+}
+
+.prose h1 {
+  color: var(--old-red); 
+}
+
+.prose h2 {
+  color: var(--secondary-text);
+}
+
+.prose code {
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}
+
+.prose pre {
+  background-color: var(--code-bg);
+  padding: 1em;
+  border-radius: 5px;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  background: none;
+  padding: 0;
+  color: var(--code-text);
+}
+
+.prose kbd, .prose samp {
+  color: var(--formula-color);
+}
+
+.prose blockquote {
+  border-left: 4px solid var(--border);
+  color: var(--secondary-text);
+  font-style: italic;
+  padding-left: 1em;
+  margin: 1em 0;
+}
+
+/* 数学公式 */
+.prose .katex {
+  color: var(--formula-color);
 }
 
 .light {
@@ -23,12 +77,14 @@
 }
 
 .dark {
+  --primary-text: #d6d3d3;
   --color-primary: #ffffff;
   --color-secondary: #1a1a1a;
-  --color-accent: #3498db;
-  --color-text: #e0e0e0;
-  --color-background: url('/img/2.png'); /* 夜晚背景 */
+  --color-accent: #125a8a;
+  --color-text: #ffffff;
+  --color-background: url('/img/2.png'); 
   --color-glass: rgba(255, 255, 255, 0.1);
+  --formula-color: #3f92f8;
 }
 
 body {
@@ -93,7 +149,7 @@ body {
 }
 
 .word-cloud-text:hover {
-  fill: var(--old-red);
+  fill: var(--peking-red);
   transform: scale(1.15);
   cursor: pointer;
 }

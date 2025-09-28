@@ -41,7 +41,7 @@ export default function Note({ noteData }: { noteData: NoteData }) {
         <title>{noteData.title} | Plote</title>
       </Head>
       <motion.div 
-        className="min-h-screen py-24 sm:py-32"
+        className="min-h-screen py-24 sm:py-32 dark"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.8 }}

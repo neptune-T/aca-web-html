@@ -40,7 +40,7 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
         <div className="max-w-4xl mx-auto">
           <header className="text-center mb-16">
             <motion.h1 
-              className="text-5xl font-extrabold tracking-tight text-white sm:text-6xl md:text-7xl"
+              className="text-5xl font-extrabold tracking-tight text-old-red sm:text-6xl md:text-7xl"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
@@ -83,16 +83,16 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
                   transition={{ duration: 0.5, delay: index * 0.1 + 0.4 }}
                 >
                   <Link href={`/notes/${id}`} legacyBehavior>
-                    <a className="block p-8 rounded-xl bg-black/20 backdrop-blur-sm transition-all duration-300 hover:bg-black/40 hover:shadow-2xl hover:shadow-klein-blue/20 transform hover:-translate-y-1">
-                      <p className="text-sm text-gray-400 mb-2">{date}</p>
-                      <h2 className="text-3xl font-bold text-gray-100 mb-3">{title}</h2>
-                      <p className="text-lg text-gray-300 mb-4">{summary}</p>
+                    <a className="block p-8 rounded-xl bg-black/50 backdrop-blur-md transition-all duration-300 hover:bg-black/60 hover:shadow-2xl hover:shadow-klein-blue/20 transform hover:-translate-y-1">
+                      <p className="text-sm text-gray-100 mb-2 opacity-90">{date}</p>
+                      <h2 className="text-3xl font-bold text-white mb-3">{title}</h2>
+                      <p className="text-lg text-gray-100 mb-4 opacity-90">{summary}</p>
                       {tags && tags.length > 0 && (
                         <div className="flex flex-wrap gap-2">
                           {tags.map(tag => (
                             <span 
                               key={tag} 
-                              className="inline-block px-3 py-1 text-sm font-medium text-gray-100 bg-white/5 backdrop-blur-md rounded-full border border-white/10"
+                              className="inline-block px-3 py-1 text-sm font-medium text-white bg-red-500/40 backdrop-blur-md rounded-full border border-red-300/20"
                             >
                               {tag}
                             </span>
