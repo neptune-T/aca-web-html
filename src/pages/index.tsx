@@ -93,14 +93,14 @@ const Home = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                   <motion.div className="p-6 rounded-lg group backdrop-blur-sm bg-black/20" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants}>
                       <div className="flex items-center mb-4">
-                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--peking-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
+                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--old-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
                               <FaFlask className="w-5 h-5 text-white" />
                           </motion.div>
                           <h3 className="text-xl font-semibold chinese-font text-gray-100">笔记</h3>
                       </div>
                       <p className="text-gray-300 mb-4">Research notes and methodological insights from my ongoing projects and experiments.</p>
                       <div className="space-y-2">
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-peking-red bg-red-500/20 hover:bg-red-500/40">Cognitive Models</a>
+                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Cognitive Models</a>
                           <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Experimental Design</a>
                       </div>
                   </motion.div>
@@ -115,20 +115,20 @@ const Home = () => {
                       <p className="text-gray-300 mb-4">Critical reviews and summaries of influential papers in AI and cognitive science.</p>
                       <div className="space-y-2">
                           <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Recent Publications</a>
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-peking-red bg-red-500/20 hover:bg-red-500/40">Classic Papers</a>
+                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Classic Papers</a>
                       </div>
                   </motion.div>
 
                   <motion.div className="p-6 rounded-lg group backdrop-blur-sm bg-black/20" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.4}} variants={fadeInVariants}>
                       <div className="flex items-center mb-4">
-                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--peking-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
+                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--old-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
                               <FaUser className="w-5 h-5 text-white" />
                           </motion.div>
                           <h3 className="text-xl font-semibold chinese-font text-gray-100">关于我</h3>
                       </div>
                       <p className="text-gray-300 mb-4">Personal reflections on academic life, research philosophy, and interdisciplinary thinking.</p>
                       <div className="space-y-2">
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-peking-red bg-red-500/20 hover:bg-red-500/40">Academic Journey</a>
+                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Academic Journey</a>
                           <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Teaching Philosophy</a>
                       </div>
                   </motion.div>

@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto bg-black/20 backdrop-blur-sm p-8 rounded-t-lg">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 text-center md:text-left">
-            <p className="text-xl font-bold" style={{ color: 'var(--peking-red)' }}>Plote</p>
+            <p className="text-xl font-bold" style={{ color: 'var(--old-red)' }}>Plote</p>
             <p className="text-gray-300">Academic Homepage</p>
           </div>
           <div className="flex space-x-6">

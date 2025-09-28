@@ -1,0 +1,22 @@
+[
+  {
+    "title": "nips审稿人",
+    "description": "2025",
+    "borderColor": "red-accent"
+  },
+  {
+    "title": "Bronze Medal",
+    "description": "ICPC Invitational",
+    "borderColor": "old-red"
+  },
+  {
+    "title": "National Silver Medal",
+    "description": "Chinese Mathematical Olympiad (CMO), 2021",
+    "borderColor": "klein-blue"
+  },
+  {
+    "title": "First Prize (Provincial Level)",
+    "description": "Chinese Chemistry Olympiad (CChO), 2020",
+    "borderColor": "red-accent"
+  }
+]

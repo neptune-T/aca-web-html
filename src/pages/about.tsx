@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import * as echarts from 'echarts';
 import { useEffect, useState, Suspense, useRef } from 'react';
 import { getTravelData } from '@/lib/travel';
+import { getHonorsData } from '@/lib/honors';
 import Head from 'next/head';
 
 // Dynamic import for client-side only
@@ -17,9 +18,14 @@ type AboutProps = {
       china: Record<string, { description: string; visits: number }>;
     };
   };
+  honorsData: Array<{
+    title: string;
+    description: string;
+    borderColor: string;
+  }>;
 };
 
-const About = ({ travelData }: AboutProps) => {
+const About = ({ travelData, honorsData }: AboutProps) => {
   const visitedPlaces = { world: travelData.world, china: travelData.china };
   const placeDetails = travelData.details;
 
@@ -368,18 +374,12 @@ const About = ({ travelData }: AboutProps) => {
               Honors & Awards
             </h2>
             <div className="space-y-4">
-              <div className="p-4 border-l-4 border-pku-red bg-black/20 backdrop-blur-sm rounded-r-lg">
-                <p className="font-semibold text-lg text-gray-100">Bronze Medal</p>
-                <p className="text-gray-400"> ICPC Invitational</p>
-              </div>
-              <div className="p-4 border-l-4 border-klein-blue bg-black/20 backdrop-blur-sm rounded-r-lg">
-                <p className="font-semibold text-lg text-gray-100">National Silver Medal</p>
-                <p className="text-gray-400">Chinese Mathematical Olympiad (CMO), 2021</p>
-              </div>
-              <div className="p-4 border-l-4 border-pku-red bg-black/20 backdrop-blur-sm rounded-r-lg">
-                <p className="font-semibold text-lg text-gray-100">First Prize (Provincial Level)</p>
-                <p className="text-gray-400">Chinese Chemistry Olympiad (CChO), 2020</p>
-              </div>
+              {honorsData.map((honor, index) => (
+                <div key={index} className={`p-4 border-l-4 border-${honor.borderColor} bg-black/20 backdrop-blur-sm rounded-r-lg`}>
+                  <p className="font-semibold text-lg text-gray-100">{honor.title}</p>
+                  <p className="text-gray-400">{honor.description}</p>
+                </div>
+              ))}
             </div>
           </section>
 
@@ -391,9 +391,11 @@ const About = ({ travelData }: AboutProps) => {
 
 export async function getStaticProps() {
   const travelData = getTravelData();
+  const honorsData = getHonorsData();
   return {
     props: {
       travelData,
+      honorsData,
     },
   };
 }

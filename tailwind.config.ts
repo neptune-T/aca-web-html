@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'peking-red': '#8A0000',
+        'old-red': '#8A0000',
         'klein-blue': '#002FA7',
       },
       fontFamily: {

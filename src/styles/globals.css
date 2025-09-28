@@ -9,21 +9,33 @@
   --color-secondary: #1a1a1a;
   --color-accent: #3498db;
   --color-text: #e0e0e0;
-  --color-background: #000000;
+  --color-background: url('/img/1.png');
   --color-glass: rgba(255, 255, 255, 0.1);
 }
 
-.dark {
+.light {
   --color-primary: #000000;
-  --color-background: #ffffff;
-  /* 根据需要调整其他变量 */
+  --color-secondary: #f0f0f0;
+  --color-accent: #007bff;
+  --color-text: #333333;
+  --color-background: url('/img/1.png'); /* 白天背景 */
+  --color-glass: rgba(0, 0, 0, 0.1);
+}
+
+.dark {
+  --color-primary: #ffffff;
+  --color-secondary: #1a1a1a;
+  --color-accent: #3498db;
+  --color-text: #e0e0e0;
+  --color-background: url('/img/2.png'); /* 夜晚背景 */
+  --color-glass: rgba(255, 255, 255, 0.1);
 }
 
 body {
-  background-image: url('/img/1.png');
+  background-image: var(--color-background);
   background-size: cover;
   background-position: center;
-  background-attachment: fixed; /* 固定背景，滚动时不移动 */
+  background-attachment: fixed;
   color: var(--color-text);
   font-family: var(--font-body);
 }
@@ -81,7 +93,7 @@ body {
 }
 
 .word-cloud-text:hover {
-  fill: var(--peking-red);
+  fill: var(--old-red);
   transform: scale(1.15);
   cursor: pointer;
 }

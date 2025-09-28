@@ -57,10 +57,10 @@ export default function Note({ noteData }: { noteData: NoteData }) {
             </div>
             <div className="bg-black/30 backdrop-blur-lg p-8 md:p-12 rounded-xl">
                 <article className="prose prose-lg prose-invert max-w-none 
-                                prose-h1:text-4xl prose-h1:font-bold prose-h1:text-peking-red 
+                                prose-h1:text-4xl prose-h1:font-bold prose-h1:text-old-red 
                                 prose-a:text-klein-blue hover:prose-a:text-opacity-80
                                 prose-strong:text-gray-100
-                                prose-code:text-peking-red prose-code:bg-gray-500/20 prose-code:rounded-md prose-code:px-1.5 prose-code:py-1">
+                                prose-code:text-old-red prose-code:bg-gray-500/20 prose-code:rounded-md prose-code:px-1.5 prose-code:py-1">
                     <h1>{noteData.title}</h1>
                     <p className="text-gray-400 text-base -mt-4 mb-8">{noteData.date}</p>
                     <div dangerouslySetInnerHTML={{ __html: noteData.contentHtml }} />

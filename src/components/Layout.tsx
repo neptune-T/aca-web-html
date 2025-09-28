@@ -6,6 +6,7 @@ import Footer from './Footer';
 import IntroAnimation from './IntroAnimation';
 import { AnimatePresence } from 'framer-motion';
 import { theme } from '@/styles/theme';
+import { FaSun, FaMoon } from 'react-icons/fa';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
 const backgroundImageUrl = `${basePath}/img/1.jpg`;
@@ -16,7 +17,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [showIntro, setShowIntro] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(true); // 默认暗模式
+  const [isDarkMode, setIsDarkMode] = useState(false); // 默认白天
 
   useEffect(() => {
     if (sessionStorage.getItem('introPlayed')) {
@@ -26,7 +27,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   useEffect(() => {
     const savedMode = localStorage.getItem('theme');
-    setIsDarkMode(savedMode === 'dark' || savedMode === null);
+    setIsDarkMode(savedMode === 'dark');
   }, []);
 
   useEffect(() => {
@@ -34,18 +35,34 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
+  useEffect(() => {
+    console.log('Mode changed to', isDarkMode ? 'dark' : 'light');
+    const bgUrl = isDarkMode ? "url('/img/2.png')" : "url('/img/1.png')";
+    document.body.style.backgroundImage = bgUrl;
+    document.body.style.backgroundSize = 'cover';
+    document.body.style.backgroundPosition = 'center';
+    document.body.style.backgroundAttachment = 'fixed';
+  }, [isDarkMode]);
+
   const handleAnimationComplete = () => {
     setShowIntro(false);
     sessionStorage.setItem('introPlayed', 'true');
   };
 
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode);
+  const toggleDarkMode = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    setIsDarkMode(!isDarkMode);
+  };
 
   return (
-    <div className={`min-h-screen ${isDarkMode ? 'dark' : ''}`} style={{ background: theme.colors.background, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed' }}>
-      {/* 添加切换按钮 */}
-      <button onClick={toggleDarkMode} className="fixed top-4 right-4 p-2 bg-gray-800 text-white rounded">
-        {isDarkMode ? 'Light Mode' : 'Dark Mode'}
+    <div 
+      className={`min-h-screen transition-all duration-500 ${isDarkMode ? 'dark' : 'light'}`} 
+    >
+      <button 
+        onClick={toggleDarkMode} 
+        className="fixed top-4 right-4 p-2 rounded-full bg-glass backdrop-blur-md text-accent hover:text-primary transition-colors hover:shadow-md cursor-pointer z-50 pointer-events-auto"
+      >
+        {isDarkMode ? <FaMoon size={20} /> : <FaSun size={20} />}
       </button>
       {/* Blurred Background */}
       <div
