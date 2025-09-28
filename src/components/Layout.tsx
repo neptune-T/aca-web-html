@@ -5,7 +5,7 @@ import Header from './Header';
 import Footer from './Footer';
 import IntroAnimation from './IntroAnimation';
 import { AnimatePresence } from 'framer-motion';
-import { theme } from '@/styles/theme';
+// import { theme } from '@/styles/theme';
 import { FaSun, FaMoon } from 'react-icons/fa';
 
 const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';

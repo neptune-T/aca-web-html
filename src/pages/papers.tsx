@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { SiArxiv, SiGithub, SiHuggingface } from 'react-icons/si';
 import Image from 'next/image';
 
+
 export async function getStaticProps() {
   const allPapersData = getSortedPapersData();
   return {
