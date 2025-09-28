@@ -4,14 +4,28 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  body {
-    @apply bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans;
-  }
+:root {
+  --color-primary: #ffffff;
+  --color-secondary: #1a1a1a;
+  --color-accent: #3498db;
+  --color-text: #e0e0e0;
+  --color-background: #000000;
+  --color-glass: rgba(255, 255, 255, 0.1);
+}
 
-  .prose-lg h1, .prose-lg h2, .prose-lg h3, .prose-lg h4, .prose-lg h5, .prose-lg h6 {
-    @apply font-bold;
-  }
+.dark {
+  --color-primary: #000000;
+  --color-background: #ffffff;
+  /* 根据需要调整其他变量 */
+}
+
+body {
+  background-image: url('/img/1.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; /* 固定背景，滚动时不移动 */
+  color: var(--color-text);
+  font-family: var(--font-body);
 }
 
 /* Animations from moban.html */

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://your-site.com/</loc>
+    <lastmod>2024-09-28</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://your-site.com/about</loc>
+    <lastmod>2024-09-28</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://your-site.com/notes</loc>
+    <lastmod>2024-09-28</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://your-site.com/papers</loc>
+    <lastmod>2024-09-28</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <!-- 添加更多页面 -->
+</urlset>

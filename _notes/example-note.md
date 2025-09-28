@@ -2,6 +2,7 @@
 title: 'Example Note: An Introduction to My Research'
 date: '2024-07-26'
 summary: 'This is a brief summary of my first note. It demonstrates how Markdown and LaTeX can be used to create rich content.'
+tags: ['人工智能', '物理']
 ---
 
 ## Introduction

@@ -32,10 +32,10 @@ export function getSortedNotesData() {
 
       return {
         id,
-        ...(matterResult.data as { title: string; date: string; summary: string }),
+        ...(matterResult.data as { title: string; date: string; summary: string; tags?: string[] }),
       };
     })
-    .filter((note): note is { id: string; title: string; date: string; summary: string } => note !== null);
+    .filter((note): note is { id: string; title: string; date: string; summary: string; tags?: string[] } => note !== null);
 
   return allNotesData.sort((a, b) => {
     if (a.date < b.date) {
@@ -79,6 +79,6 @@ export async function getNoteData(id: string) {
   return {
     id,
     contentHtml,
-    ...(matterResult.data as { title: string; date: string; summary: string }),
+    ...(matterResult.data as { title: string; date: string; summary: string; tags?: string[] }),
   };
 } 
