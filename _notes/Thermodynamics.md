@@ -1,9 +1,10 @@
 ---
 title: '第一性原理分析热力学和统计力学'
 date: '2025-05'
-summary: 'This is a brief summary of my first note. It demonstrates how Markdown and LaTeX can be used to create rich content.'
+summary: 'Statistical mechanics is built upon the postulate of equal probability, which bridges deterministic microscopic mechanics and macroscopic thermodynamics. This foundation allows for the derivation of entropy and temperature, ultimately unifying classical and quantum descriptions through ensemble theory. '
 tags: ['热力学和统计力学', '物理']
 ---
+
 `一个笨人能理解的东西，其他人也能理解。 —— Richard Phillips Feynman`
 
 为了研究一个物体或者说系统的性质，首先必须明确它所处的状态。一般的热统书里，热力学部分常讨论的是平衡态，指的是在没有外界影响的条件下，物体的各部分的宏观性质（温度T、体积V等等）在长时间内不发生任何变化。
