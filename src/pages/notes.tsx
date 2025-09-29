@@ -34,7 +34,7 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
     <>
       <Head>
         <title>Notes | My Personal Website</title>
-        <meta name="description" content="A collection of thoughts and explorations in Generative AI." />
+        <meta name="description" content="A collection of thoughts and explorations." />
       </Head>
       <div className="py-24 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">

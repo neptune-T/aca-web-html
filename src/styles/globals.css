@@ -7,10 +7,10 @@
 /* 学术风格配色方案 */
 :root {
   --primary-text: #1a202c;
-  --secondary-text: #4a5568;
+  --secondary-text: #0d8da3;
   --accent-blue: #2b6cb0;
-  --code-bg: #2d3748;
-  --code-text: #e2e8f0;
+  --code-bg: #475368;
+  --code-text: #65a0ec;
   --formula-color: #1e40af;
   --highlight: #fef5e7;
   --border: #e2e8f0;
