@@ -102,7 +102,7 @@ $$
 
 概率模型最常见的标准是最大对数似然(ML). *Maximization of the log-likelihood criterion is equivalent to minimization of a Kullback Leibler divergence between the data and model distributions.*
 
-优化方式比较好用的方法是**_stochastic gradient descent_**
+优化方式比较好用的方法是 **_stochastic gradient descent_**
 
 考虑一个数据集 $\mathcal{D}$ 包含N个数据点,我们无法每次都使用整个数据集来计算梯度，因为这样计算代价太高。因此，我们随机抽取一个小批量数据 $\mathcal{M}$（例如，大小为 $N_{\mathcal{M}}$），并计算这个小批量数据上的梯度。我们希望这个小批量数据上的梯度能够在期望值上等于整个数据集上的梯度。
 
@@ -303,7 +303,7 @@ $$
 
 ## Evidence Lower Bound (ELBO)
 
-![It shows how to learn and generate new data through mapping between latent variable space ($\mathcal{z}$-space) and observed data space ($\mathcal{x}$-space).](/img/vae/vae.png)
+![It shows how to learn and generate new data through mapping between latent variable space ($\mathcal{z}$-space) and observed data space ($\mathcal{x}$-space).](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/vae/vae.png)
 
 VAE 通过编码器和解码器网络，利用先验分布、后验近似和重建分布，实现对复杂数据分布的近似建模和生成。
 
@@ -423,7 +423,8 @@ $$
 \end{align}
 $$
 
-![This image illustrates the reparameterization trick, a critical technique in variational autoencoders (VAEs) for efficient gradient-based optimization. The trick allows us to rewrite the sampling process of latent variables in a differentiable manner.](/img/vae/epsilon.png)
+![This image illustrates the reparameterization trick, a critical technique in variational autoencoders (VAEs) for efficient gradient-based optimization. The trick allows us to rewrite the sampling process of latent variables in a differentiable manner.](
+https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public//img/vae/epsilon.png)
 
 图 2 展示了重新参数化技巧的工作原理，主要包括以下两个部分：原始形式和重新参数化形式。
 

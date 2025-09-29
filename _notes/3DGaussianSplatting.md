@@ -5,7 +5,7 @@ summary: 'Represents a 3D scene as an explicit set of anisotropic 3D Gaussians, 
 tags: ['计算机图形学']
 ---
 
-![](../public/img/3dgs/1.png)
+![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/3dgs/1.png)
 
 # 三维场景的参数化表示
 
