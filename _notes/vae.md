@@ -8,8 +8,10 @@ tags: ['generative model']
 # Introduction
 
 
-这是笔者在大学二年级暑假时撰写的关于变分自编码器 (VAE) 的学习笔记。笔记全文采用 Typst 进行编写与排版，此 README 版本由 Typst 源码经 Google Gemini 辅助转换生成。可点击链接查看原本 pdf 格式内容。 [![查看笔记](https://img.shields.io/badge/查看笔记-VAE_Notes-9cf)](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/notes/vae.pdf)
+这是笔者在大学二年级暑假时撰写的关于变分自编码器 (VAE) 的学习笔记。笔记全文采用 Typst 进行编写与排版，此 README 版本由 Typst 源码经 Google Gemini 辅助转换生成。可点击链接查看原本 pdf 格式内容。 [![查看笔记](https://img.shields.io/badge/查看笔记-VAE_Notes-9cf)](/notes/vae.pdf)
 
+
+<iframe src="/notes/vae.pdf" width="100%" height="600px" style="border: none;"></iframe>
 
 ## Motivation
 
