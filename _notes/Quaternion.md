@@ -126,17 +126,182 @@ $$
 $$
 
 
-由于 $\hat{u}$ 是单位向量，所以 $u_x^2 + u_y^2 + u_z^2 = \|\hat{u}\|^2 = 1$。因此，上式根据三角函数的平方和定理，结果恒等于1。这个单位模长的性质保证了由该四元数引发的变换将是纯粹的旋转，不包含任何我们不希望的缩放效果。同时，您可能会注意到公式中**半角 $\theta/2$** 的使用。这并非巧合或近似，而是为下一节将要介绍的核心旋转算子所做的必要准备。该算子的数学结构将使角度效应被施加两次，因此我们在此预先使用半角，以确保最终的几何效果恰好是我们期望的旋转角度 $\theta$。
+由于 $\hat{u}$ 是单位向量，所以 $u_x^2 + u_y^2 + u_z^2 = \|\hat{u}\|^2 = 1$。因此，上式根据三角函数的平方和定理，结果恒等于1。这个单位模长的性质保证了由该四元数引发的变换将是纯粹的旋转，不包含任何我们不希望的缩放效果。同时，这里会有一个问题是为什么使用**半角 $\theta/2$** 。这并非巧合或近似，笔者在下一节去解释核心旋转算子所做的必要准备。该算子的数学结构将使角度效应被施加两次，因此我们在此预先使用半角，以确保最终的几何效果恰好是我们期望的旋转角度 $\theta$。
 
 
 
 
+# 旋转算子及其数学原理
+
+现在，我们将这两者结合，定义一个能够对三维向量实施旋转的精确数学操作。这个操作被称为**共轭变换 (Conjugation)**，因其在形式上将被操作的向量“包裹”在中间，也常被形象地称为“三明治积”。
+
+**定义 (四元数旋转算子)**：给定一个代表三维向量 $\vec{v}$ 的纯四元数 $v$，以及一个代表某次旋转的单位四元数 $q$，旋转后得到的新向量 $\vec{v}'$ 所对应的纯四元数 $v'$，由以下公式给出：
+$$
+\begin{equation}
+v' = qvq^{-1}
+\end{equation}
+$$
+由于我们已经知道单位四元数的逆等于其共轭 ($q^{-1} = q^*$)，此公式也等价于 $v' = qvq^*$。这个简洁的表达式蕴含了深刻的代数原理，正是这些原理保证了其几何效果的正确性。为了证明这一点，我们必须从数学上严格验证该变换满足旋转的两个基本性质：它必须保持向量的维度（三维向量旋转后仍是三维向量），并且必须保持向量的长度（旋转是刚体变换）。
+
+首先，我们来证明**变换后的结果 $v'$ 仍然是一个纯四元数**，即其标量部 $S(v')=0$。我们可以通过分析 $v'$ 的共轭 $(v')^*$ 来巧妙地证明这一点。利用四元数乘积的共轭性质 $(ab)^* = b^*a^*$，我们得到：
+$$
+\begin{equation}
+(v')^* = (qvq^*)^* = (q^*)^* v^* q^*
+\end{equation}
+$$
+
+由于 $(q^*)^* = q$，并且 $v$ 是一个纯四元数，所以其共轭 $v^* = -v$。将这两点代入，我们得到：
+
+$$
+\begin{equation}
+(v')^* = q(-v)q^* = -qvq^* = -v'
+\end{equation}
+$$
+
+一个数的共轭等于它自身的相反数（$(v')^* = -v'$），这正是纯四元数的定义。因此，我们已经严格证明了 $v'$ 的标量部必为零，这意味着旋转算子的输出结果始终保持在三维向量空间内，不会产生我们不希望的第四维度分量。
+
+其次，我们来证明**该变换保持向量的长度不变**。这一点可以通过模的乘法性质 $\|ab\| = \|a\|\|b\|$ 来轻松验证。我们计算 $v'$ 的模：
+
+$$
+\begin{equation}
+\|v'\| = \|qvq^{-1}\|
+\end{equation}
+$$
+
+应用模的乘法性质，我们将其分解为三个模的乘积：
+$$
+\begin{equation}
+\|v'\| = \|q\| \cdot \|v\| \cdot \|q^{-1}\|
+\end{equation}
+$$
+
+因为 $q$ 是代表旋转的单位四元数，所以其模 $\|q\|=1$。它的逆 $q^{-1}$（也就是它的共轭）同样也是一个单位四元数，所以 $\|q^{-1}\|=1$。因此：$$\|v'\| = 1 \cdot \|v\| \cdot 1 = \|v\|$$
+这个结果表明，变换前后向量的长度完全相等。这从代数上无可辩驳地证明了四元数共轭变换是一种**保距变换 (isometry)**，它只改变向量的方向而不改变其大小，这与我们对空间旋转的几何直觉完全吻合。
 
 
 
+# why ${\theta}/2$
+
+现在笔者证明**为什么构造旋转四元数时必须使用半角 $\theta/2$**。
+
+要证明这一点，最严谨的方法就是将我们第四节定义的旋转算子 $v' = qvq^{-1}$ 进行完全的代数展开，并证明其展开后的最终形式，与公认的、描述三维旋转的权威几何公式——**罗德里格旋转公式 (Rodrigues' Rotation Formula)**完全等价。如果从 $\theta/2$ 出发的代数，最终能推导出包含完整角 $\theta$ 的几何公式，那么半角的必要性就得到了无可辩驳的证明。
+
+首先，我们回顾一下所有需要的元素：
+- 待旋转的向量（纯四元数）：$v$
+- 旋转轴（单位纯四元数）：$\hat{u}$
+- 旋转四元数及其逆（使用 $c = \cos(\frac{\theta}{2}), s = \sin(\frac{\theta}{2})$ 简化）：
+    * $q = c + s\hat{u}$
+    * $q^{-1} = q^* = c - s\hat{u}$
+  
+我们知道两个纯四元数乘积的几何意义：$u_1 u_2 = -(\vec{u}_1 \cdot \vec{u}_2) + (\vec{u}_1 \times \vec{u}_2)$ 那我们的目标就是证明 $v' = qvq^{-1}$ 的矢量部分等价于罗德里格公式：
+$$
+\begin{equation}
+    \vec{v}' = \vec{v}\cos\theta + (\hat{u} \times \vec{v})\sin\theta + \hat{u}(\hat{u} \cdot \vec{v})(1-\cos\theta)
+\end{equation}
+$$
+
+首先我们先展开旋转算子 $v' = qvq^{-1}$
+
+我们将 $q$ 和 $q^{-1}$ 代入，并进行乘法展开：
+
+$$
+\begin{equation}
+v' = (c + s\hat{u}) v (c - s\hat{u})
+\end{equation}
+$$
+
+$$
+\begin{equation}
+v' = (cv + s\hat{u}v)(c - s\hat{u})
+\end{equation}
+$$
+
+$$
+\begin{equation}
+v' = c^2v - cs(v\hat{u}) + sc(\hat{u}v) - s^2(\hat{u}v\hat{u})
+\end{equation}
+$$
+
+现在，我们利用纯四元数乘积的几何意义来替换 $\hat{u}v$ 和 $v\hat{u}$：
+$$
+\begin{equation}
+\hat{u}v = -(\hat{u} \cdot \vec{v}) + (\hat{u} \times \vec{v})
+\end{equation}
+$$
+
+$$
+\begin{equation}
+v\hat{u} = -(\vec{v} \cdot \hat{u}) + (\vec{v} \times \hat{u}) = -(\hat{u} \cdot \vec{v}) - (\hat{u} \times \vec{v})
+\end{equation}
+$$
+
+代入展开式中：
+$$
+\begin{equation}
+v' = c^2v - cs(-(\hat{u} \cdot \vec{v}) - (\hat{u} \times \vec{v})) + sc(-(\hat{u} \cdot \vec{v}) + (\hat{u} \times \vec{v})) - s^2(\hat{u}v\hat{u})
+\end{equation}
+$$
+
+整理后，标量部分 $(\hat{u} \cdot \vec{v})$ 的项相互抵消，而矢量叉乘项 $(\hat{u} \times \vec{v})$ 被加倍：
+
+$$
+\begin{equation}
+v' = c^2v + 2cs(\hat{u} \times \vec{v}) - s^2(\hat{u}v\hat{u})
+\end{equation}
+$$
+
+接下来，我们处理最复杂的项 $\hat{u}v\hat{u}$。我们可以把它看作 $(\hat{u}v)\hat{u}$：
+$$
+\begin{equation}
+\hat{u}v\hat{u} = (-(\hat{u} \cdot \vec{v}) + (\hat{u} \times \vec{v}))\hat{u} = -(\hat{u} \cdot \vec{v})\hat{u} + (\hat{u} \times \vec{v})\hat{u}
+\end{equation}
+$$
+
+其中 $(\hat{u} \times \vec{v})\hat{u}$ 是两个正交纯四元数（一个向量和另一个与之垂直的向量）的乘积，其结果等于它们的叉乘 $(\hat{u} \times \vec{v}) \times \hat{u}$。根据向量三重积公式 $\vec{A} \times (\vec{B} \times \vec{C}) = \vec{B}(\vec{A}\cdot\vec{C}) - \vec{C}(\vec{A}\cdot\vec{B})$，我们有：
+
+$$
+\begin{equation}
+(\hat{u} \times \vec{v}) \times \hat{u} = \vec{v}(\hat{u} \cdot \hat{u}) - \hat{u}(\hat{u} \cdot \vec{v})
+\end{equation}
+$$
+
+因为 $\hat{u}$ 是单位向量，$\hat{u} \cdot \hat{u} = 1$。所以上式等于 $\vec{v} - \hat{u}(\hat{u} \cdot \vec{v})$。
+因此，$\hat{u}v\hat{u} = \vec{v} - 2\hat{u}(\hat{u} \cdot \vec{v})$。
+
+将此结果代回 $v'$ 的表达式：
+$$
+\begin{equation}
+v' = c^2v + 2cs(\hat{u} \times \vec{v}) - s^2(\vec{v} - 2\hat{u}(\hat{u} \cdot \vec{v}))
+\end{equation}
+$$
+
+将所有项按 $\vec{v}$，$(\hat{u} \times \vec{v})$ 和 $\hat{u}(\hat{u} \cdot \vec{v})$ 进行合并：
+
+$$
+\begin{equation}
+v' = (c^2 - s^2)v + (2sc)(\hat{u} \times \vec{v}) + (2s^2)\hat{u}(\hat{u} \cdot \vec{v})
+\end{equation}
+$$
+
+
+现在，我们使用三角函数的倍角公式，将包含半角 $\theta/2$ 的项 $c$ 和 $s$ 转换回包含完整角 $\theta$ 的形式：
+
+$$c^2 - s^2 = \cos^2(\frac{\theta}{2}) - \sin^2(\frac{\theta}{2}) = \cos(\theta)$$
+
+$$2sc = 2\sin(\frac{\theta}{2})\cos(\frac{\theta}{2}) = \sin(\theta)$$
+
+$$2s^2 = 2\sin^2(\frac{\theta}{2}) = 1 - \cos(\theta)$$
+
+将这些代回到我们推导出的 $v'$ 的最终表达式中：
+$$
+\begin{equation}
+v' = v\cos\theta + (\hat{u} \times \vec{v})\sin\theta + \hat{u}(\hat{u} \cdot \vec{v})(1-\cos\theta)
+\end{equation}
+$$
 
 
 
+这个最终结果，一字不差地，正是罗德里格旋转公式。我们从一个完全代数的构造（使用 $\theta/2$ 的四元数 $q$ 和共轭运算 $v' = qvq^{-1}$）出发，通过一系列严格的代数展开和替换，最终抵达了一个描述完整角 $\theta$ 旋转的、被广泛公认的几何公式。这个过程有力地证明了，在四元数旋转的框架下，使用半角 $\theta/2$ 不是一个近似或巧合，而是使其代数形式能够精确映射到正确几何现实的数学必然。
 
 
 
