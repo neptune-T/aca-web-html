@@ -37,7 +37,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   useEffect(() => {
     console.log('Mode changed to', isDarkMode ? 'dark' : 'light');
-    const bgUrl = isDarkMode ? "url('/img/2.png')" : "url('/img/1.jpg')";
+    const bgUrl = isDarkMode ? `url('${basePath}/img/2.png')` : `url('${basePath}/img/1.jpg')`;
     document.body.style.backgroundImage = bgUrl;
     document.body.style.backgroundSize = 'cover';
     document.body.style.backgroundPosition = 'center';

@@ -72,7 +72,6 @@
   --color-secondary: #f0f0f0;
   --color-accent: #007bff;
   --color-text: #333333;
-  --color-background: url('/img/1.jpg'); /* 白天背景 */
   --color-glass: rgba(0, 0, 0, 0.1);
 }
 
@@ -82,16 +81,12 @@
   --color-secondary: #1a1a1a;
   --color-accent: #125a8a;
   --color-text: #ffffff;
-  --color-background: url('/img/2.png'); 
   --color-glass: rgba(255, 255, 255, 0.1);
   --formula-color: #3f92f8;
 }
 
 body {
-  background-image: var(--color-background);
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
+  /* Background is set dynamically in Layout.tsx */
   color: var(--color-text);
   font-family: var(--font-body);
 }
