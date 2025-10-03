@@ -29,8 +29,8 @@ This is a personal academic homepage built with Next.js. It showcases academic b
 
 1.  **Clone the repository**
     ```bash
-    git clone https://github.com/your-username/your-repo-name.git
-    cd your-repo-name
+    git clone https://github.com/neptune-T/aca-web-html.git
+    cd aca-web-html
     ```
 
 2.  **Install dependencies**

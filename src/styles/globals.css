@@ -72,7 +72,7 @@
   --color-secondary: #f0f0f0;
   --color-accent: #007bff;
   --color-text: #333333;
-  --color-background: url('/img/1.png'); /* 白天背景 */
+  --color-background: url('/img/1.jpg'); /* 白天背景 */
   --color-glass: rgba(0, 0, 0, 0.1);
 }
 
