@@ -4,7 +4,7 @@ const isProd = process.env.NODE_ENV === 'production';
 const repoName = 'aca-web-html';
 
 const nextConfig: NextConfig = {
-  // output: 'export',  // Temporarily disabled for dev
+  output: 'export',
   assetPrefix: isProd ? `/${repoName}/` : '',
   basePath: isProd ? `/${repoName}` : '',
   images: {
