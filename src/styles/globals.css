@@ -1,20 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Orbitron:wght@400;600;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* 学术风格配色方案 */
+/* EVA / Motion Graphic palette */
 :root {
-  --primary-text: #1a202c;
-  --secondary-text: #0d8da3;
-  --accent-blue: #2b6cb0;
-  --code-bg: #475368;
-  --code-text: #65a0ec;
-  --formula-color: #1e40af;
-  --highlight: #fef5e7;
-  --border: #e2e8f0;
-  --old-red: #8A0000; 
+  --primary-text: #f5f5f5;
+  --color-text: #f5f5f5;
+  --secondary-text: #bcbcbc;
+  --accent-blue: #f5f5f5;
+  --accent-violet: #dcdcdc;
+  --accent-green: #cfcfcf;
+  --accent-rose: #e3e3e3;
+  --panel: rgba(5, 5, 5, 0.82);
+  --panel-bright: rgba(18, 18, 18, 0.9);
+  --panel-border: rgba(255, 255, 255, 0.18);
+  --grid-line: rgba(255, 255, 255, 0.08);
+  --code-bg: rgba(15, 15, 15, 0.95);
+  --code-text: #f8f8f8;
+  --formula-color: #e3e3e3;
+  --highlight: rgba(255, 255, 255, 0.08);
+  --border: rgba(255, 255, 255, 0.2);
+  --old-red: #8A0000;
 }
 
 /* 自定义 prose 样式 */
@@ -67,101 +75,207 @@
   color: var(--formula-color);
 }
 
-.light {
-  --color-primary: #000000;
-  --color-secondary: #f0f0f0;
-  --color-accent: #007bff;
-  --color-text: #333333;
-  --color-glass: rgba(0, 0, 0, 0.1);
-}
-
-.dark {
-  --primary-text: #d6d3d3;
-  --color-primary: #ffffff;
-  --color-secondary: #1a1a1a;
-  --color-accent: #125a8a;
-  --color-text: #ffffff;
-  --color-glass: rgba(255, 255, 255, 0.1);
-  --formula-color: #3f92f8;
+/* 苹果风格全局设置 */
+:root {
+  --background: #ffffff; /* 白色背景 */
+  --foreground: #000000; /* 黑色文字 */
+  --accent: #007aff; /* 苹果蓝 */
+  --gray: #6e6e73; /* 灰色 */
 }
 
 body {
-  /* Background is set dynamically in Layout.tsx */
-  color: var(--color-text);
-  font-family: var(--font-body);
+  background: var(--background);
+  color: #000000; /* 黑字 */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  margin: 0;
+  padding: 0;
 }
 
-/* Animations from moban.html */
-.floating-circle {
+.notes-page {
+  color: black !important;
+}
+
+h1, h2, h3 {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  color: var(--foreground);
+}
+
+a {
+  color: #007aff;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #0040dd;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* 移除不必要的类 */
+.eva-chip, .eva-pill, .eva-divider, .eva-hero-gradient, .noise-overlay, .eva-grid {
+  display: none;
+}
+
+.eva-hero-gradient {
+  background: radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.12), transparent 45%),
+              radial-gradient(circle at 75% 25%, rgba(255, 255, 255, 0.08), transparent 55%),
+              radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.05), transparent 40%);
+}
+
+.eva-section {
+  position: relative;
+  padding: 5rem 1rem;
+}
+
+.eva-section::before {
+  content: '';
   position: absolute;
-  border-radius: 50%;
-  opacity: 0;
-  animation: float 15s infinite linear;
+  inset: 0;
+  background: linear-gradient(120deg, rgba(5, 8, 15, 0.95), rgba(11, 18, 36, 0.85));
+  border-radius: 2rem;
+  filter: drop-shadow(0 0 45px rgba(87, 210, 255, 0.12));
+  pointer-events: none;
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0;
+.eva-card {
+  position: relative;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: 0 10px 35px rgba(5, 8, 15, 0.45);
+  overflow: hidden;
+}
+
+.eva-card::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 1.1rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+.eva-card-glow {
+  position: absolute;
+  inset: 20% 10%;
+  background: radial-gradient(circle, rgba(124, 137, 255, 0.18), transparent 60%);
+  filter: blur(50px);
+  pointer-events: none;
+}
+
+.eva-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(10, 10, 10, 0.7);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.eva-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+  opacity: 0.5;
+}
+
+.eva-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.eva-stat-value {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-text);
+}
+
+.eva-stat-label {
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: rgba(215, 224, 255, 0.7);
+}
+
+.eva-pill {
+  border-radius: 0.75rem;
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 25px rgba(255, 255, 255, 0.08);
+}
+
+.eva-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--primary-text);
+}
+
+.eva-link svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.eva-stripes {
+  position: absolute;
+  width: 180%;
+  height: 180%;
+  background: repeating-linear-gradient(
+    -60deg,
+    rgba(255, 255, 255, 0.04),
+    rgba(255, 255, 255, 0.04) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  animation: drift 25s linear infinite;
+  pointer-events: none;
+}
+
+.noise-overlay {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' fill-opacity='0.6'%3E%3Cpath d='M0 0h1v1H0z' fill='%23ffffff' fill-opacity='.08'/%3E%3C/g%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(0);
   }
-  10% {
-    opacity: 0.3;
-  }
-  50% {
-    transform: translateY(-100px) rotate(180deg);
-    opacity: 0.7;
-  }
-  100% {
-    transform: translateY(0) rotate(360deg);
-    opacity: 0;
+  to {
+    transform: translateX(-25%);
   }
 }
 
-.fade-in {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
-}
-
-.fade-in.active {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.academic-card {
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.academic-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-}
-
-.word-cloud-text {
-  transition: all 0.3s ease-in-out;
-  animation: subtle-float 6s ease-in-out infinite;
-}
-
-.word-cloud-text:hover {
-  fill: var(--peking-red);
-  transform: scale(1.15);
-  cursor: pointer;
-}
-
-@keyframes subtle-float {
-  0% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-  100% {
-    transform: translateY(0px);
+@layer base {
+  .font-eva {
+    font-family: monospace, "Courier New", sans-serif;
+    font-weight: 600;
   }
 }
 
-#plote-logo,
-#plote-logo-main {
-  color: #8A0000 !important;
-}
+/* Comment out original glass class */
+/* .glass {
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.3));
+  backdrop-filter: blur(20px);
+  border: none;
+  border-radius: 24px;
+  padding: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+} */

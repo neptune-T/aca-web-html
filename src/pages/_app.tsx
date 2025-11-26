@@ -3,6 +3,7 @@ import 'katex/dist/katex.min.css';
 import type { AppProps } from 'next/app'
 import Head from 'next/head';
 import Layout from '@/components/Layout';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -16,9 +17,11 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta property="og:url" content="https://your-site.com" />
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <ThemeProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </ThemeProvider>
     </>
   )
 }

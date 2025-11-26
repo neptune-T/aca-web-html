@@ -1,142 +1,488 @@
 "use client";
 
-import WordCloudHero from '@/components/WordCloudHero';
+import React, { useRef, useLayoutEffect, useState, useMemo, useEffect } from 'react';
+import { Canvas, useFrame, useLoader, ThreeEvent } from '@react-three/fiber';
+import { OrbitControls, Center, Html, Line } from '@react-three/drei';
+import * as THREE from 'three';
+import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
+import { ArrowRight } from 'lucide-react'; // Sun, Moon 移到了 Header 组件里，这里不需要了
 import { motion, Variants } from 'framer-motion';
-import { FaBook, FaFlask, FaUser } from 'react-icons/fa';
+import { FaBook, FaFlask, FaUser, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
-const Home = () => {
-  const fadeInVariants: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: 'easeOut' } },
+// 引入拆分出去的 Header 组件
+import Header from '@/components/Header';
+
+// ==========================================
+// PART 1: 3D 兔子组件 (完整逻辑)
+// ==========================================
+const BUNNY_PLY_URL = '/models/bunny.ply';
+
+function InteractiveBunny({ url }: { url: string }) {
+  const geometry = useLoader(PLYLoader, url) as THREE.BufferGeometry;
+  const shaderRef = useRef<THREE.ShaderMaterial>(null);
+
+  useLayoutEffect(() => {
+    if (!geometry) return;
+    geometry.computeVertexNormals();
+    geometry.computeBoundingBox();
+    const box = geometry.boundingBox;
+    if (!box) return;
+    const center = new THREE.Vector3();
+    box.getCenter(center);
+    geometry.translate(-center.x, -center.y, -center.z);
+    const size = new THREE.Vector3();
+    box.getSize(size);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scaleFactor = 1.2 / maxDim; 
+    geometry.scale(scaleFactor, scaleFactor, scaleFactor);
+  }, [geometry]);
+
+  useFrame((state) => {
+    if (shaderRef.current) {
+      shaderRef.current.uniforms.uTime.value = state.clock.elapsedTime;
+      shaderRef.current.uniforms.uPixelRatio.value = state.viewport.dpr;
+    }
+  });
+
+  const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
+    e.stopPropagation(); 
+    if (shaderRef.current) {
+      shaderRef.current.uniforms.uHover.value.copy(e.point);
+    }
+  };
+
+  const handlePointerLeave = () => {
+    if (shaderRef.current) {
+      shaderRef.current.uniforms.uHover.value.set(9999, 9999, 9999);
+    }
+  };
+
+  const materialArgs = {
+    uniforms: {
+      uTime: { value: 0 },
+      uColor: { value: new THREE.Color('#ffffff') },
+      uHover: { value: new THREE.Vector3(9999, 9999, 9999) },
+      uInteractionRadius: { value: 0.35 }, 
+      uInteractionStrength: { value: 0.5 },
+      uPixelRatio: { value: 1 }
+    },
+    vertexShader: `
+      uniform float uTime;
+      uniform vec3 uHover;
+      uniform float uInteractionRadius;
+      uniform float uInteractionStrength;
+      uniform float uPixelRatio;
+      varying float vIntensity;
+      void main() {
+        vec3 newPosition = position;
+        float dist = distance(position, uHover);
+        float influence = smoothstep(uInteractionRadius, 0.0, dist);
+        vec3 displacement = normal * influence * uInteractionStrength;
+        float breath = sin(uTime * 2.0 + position.y * 4.0) * 0.02;
+        newPosition += displacement + (normal * breath);
+        vec4 viewPosition = viewMatrix * modelMatrix * vec4(newPosition, 1.0);
+        gl_Position = projectionMatrix * viewPosition;
+        gl_PointSize = (3.0 + influence * 12.0) * uPixelRatio; 
+        gl_PointSize *= (1.0 / -viewPosition.z);
+        vIntensity = influence;
+      }
+    `,
+    fragmentShader: `
+      varying float vIntensity;
+      uniform vec3 uColor;
+      void main() {
+        float d = distance(gl_PointCoord, vec2(0.5));
+        if(d > 0.5) discard;
+        vec3 finalColor = mix(uColor, vec3(0.2, 0.8, 1.0), vIntensity);
+        float alpha = 0.6 + vIntensity * 0.4;
+        alpha *= (1.0 - d * 2.0);
+        gl_FragColor = vec4(finalColor, alpha);
+      }
+    `
   };
 
   return (
-    <main>
-      {/* NEW Hero Section with Word Cloud - Now transparent */}
-      <WordCloudHero />
+    <group>
+      <mesh visible={false} onPointerMove={handlePointerMove} onPointerLeave={handlePointerLeave}>
+        <primitive object={geometry} />
+        <meshBasicMaterial />
+      </mesh>
+      <points> 
+        <primitive object={geometry} />
+        <shaderMaterial
+          ref={shaderRef}
+          attach="material"
+          args={[materialArgs]}
+          transparent={true}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+        />
+      </points>
+    </group>
+  );
+}
 
-      {/* Academic Introduction - With a semi-transparent card background for readability */}
-      <motion.section 
-        id="profile"
-        className="py-20 px-4 md:px-10 lg:px-20 max-w-6xl mx-auto"
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-      >
-        <div className="bg-black/30 backdrop-blur-sm p-8 md:p-12 rounded-xl">
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold mb-10 text-center text-white"
-            variants={fadeInVariants}
-          >
-            Academic Profile
-          </motion.h2>
-          
-          <motion.div className="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16" variants={fadeInVariants}>
-              <div>
-                  <h3 className="text-2xl font-semibold mb-4 text-gray-100">Research Interests</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                    
+// ==========================================
+// PART 2: 星际系统组件
+// ==========================================
+const PlanetOrbit = ({ radius, speed, color, size, offset = 0 }: { radius: number, speed: number, color: string, size: number, offset?: number }) => {
+  const groupRef = useRef<THREE.Group>(null);
+  const points = useMemo(() => {
+    const pts = [];
+    const segments = 64;
+    for (let i = 0; i <= segments; i++) {
+      const angle = (i / segments) * Math.PI * 2;
+      pts.push(new THREE.Vector3(Math.cos(angle) * radius, Math.sin(angle) * radius, 0));
+    }
+    return pts;
+  }, [radius]);
 
-                    My research interests lie in the theoretical foundations of generative modeling and their application to creating structurally coherent and physically plausible content. I approach this from a mathematical perspective, specifically studying diffusion and autoregressive models through their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. My initial focus is on applying these principles to enhance structure-aware image generation, ensuring synthesized images are not just visually convincing but also compositionally sound. Building upon this, I extend these concepts from 2D to 3D, aiming to develop generative systems that understand the physical world. I am particularly intrigued by creating physically-grounded 3D models that possess an intrinsic understanding of their own geometry and material properties, which I see as a crucial step towards realistically modeling Human-Object Interaction (HOI). By ensuring models are grounded in physical reality, we can better simulate how objects respond to interaction. This same principle extends to resolving key challenges in video generation, where ensuring long-term temporal consistency remains a significant hurdle. My ultimate ambition is to contribute to the development of World Models by creating generative systems that unify rigorous mathematical modeling with a deep, intuitive grasp of physical dynamics and creative intelligence.
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.z += speed * delta;
+    }
+  });
 
-                  </p>
-              </div>
-              <div>
-                  <h3 className="text-2xl font-semibold mb-4 text-gray-100">Biography</h3>
-                  <p className="text-gray-300 leading-relaxed">
-                  I am an undergraduate with a dual academic focus in Computer Science and a physics-intensive Materials Science program. My passion for physics lies in understanding complex systems by deriving their behavior from first principles. I particularly enjoy rigorously working through foundational derivations, from using statistical mechanics to derive the Maxwell-Boltzmann distribution and Planck&rsquo;s law of black-body radiation, to exploring the fundamental postulates that lead to the Schrödinger equation in quantum mechanics. During my sophomore year, I delved into foundational computer science through hands-on systems projects. In compilers, I implemented a miniature front-end pipeline that transforms source code into an Abstract Syntax Tree (AST) and then into an intermediate representation, upon which I applied semantic analysis and basic optimizations. In operating systems, I extended the xv6 kernel through a series of experiments, engineering core functionalities such as copy-on-write fork to optimize memory usage, as well as sophisticated process schedulers and thread pool optimizations to ensure fair resource allocation under concurrent workloads. Over the past two years, my focus has converged on the intersection of machine learning, mathematical reasoning, and interactive 3D generation. I have explored the theoretical underpinnings of diffusion models by investigating concepts such as Schrödinger Bridges with my knowledge of mathematical statistics. More recently, my work has shifted towards application, where I am exploring 3D interactivity from a physics-based perspective. My current goal is to develop AI systems that can understand and interact with the world in a physically coherent manner.
-                  </p>
-              </div>
-          </motion.div>
-          
-          <motion.div className="mb-16" variants={fadeInVariants}>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Selected Publications</h3>
-              {/* <ul className="space-y-4">
-                  <li className="border-l-4 pl-4 border-klein-blue/70">
-                      <p className="font-medium text-gray-200">&quot;Cognitive Architectures for Explainable AI&quot;</p>
-                      <p className="text-gray-400">Nature Machine Intelligence, 2023</p>
-                  </li>
-                  <li className="border-l-4 pl-4 border-klein-blue/70">
-                      <p className="font-medium text-gray-200">&quot;Neural-Symbolic Integration in Large Language Models&quot;</p>
-                      <p className="text-gray-400">AAAI Conference, 2022</p>
-                  </li>
-                  <li className="border-l-4 pl-4 border-klein-blue/70">
-                      <p className="font-medium text-gray-200">&quot;Knowledge Representation in Hybrid Learning Systems&quot;</p>
-                      <p className="text-gray-400">Journal of Artificial Intelligence Research, 2021</p>
-                  </li>
-              </ul> */}
-          </motion.div>
-          
-          <motion.div variants={fadeInVariants}>
-              <h3 className="text-2xl font-semibold mb-4 text-gray-100">Affiliations</h3>
-              <div className="flex flex-wrap gap-4">
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Peking University (Visiting)</div>
-                  <div className="px-4 py-2 rounded-full bg-gray-500/30 text-gray-200 transition-colors hover:bg-blue-400/50 hover:text-white">Institute of Automation，Chinese Academy of Sciences (Visiting)</div>
-              </div>
-          </motion.div>
-        </div>
-      </motion.section>
-
-      {/* Academic Columns - Styling updated for dark background */}
-      <section className="py-20 px-4 md:px-10 lg:px-20">
-          <div className="max-w-6xl mx-auto">
-              <motion.h2 
-                className="text-3xl md:text-4xl font-bold mb-10 text-center text-white"
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true, amount: 0.5 }}
-                variants={fadeInVariants}
-              >
-                Academic Columns
-              </motion.h2>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <motion.div className="p-6 rounded-lg group backdrop-blur-sm bg-black/20" initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants}>
-                      <div className="flex items-center mb-4">
-                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--old-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
-                              <FaFlask className="w-5 h-5 text-white" />
-                          </motion.div>
-                          <h3 className="text-xl font-semibold chinese-font text-gray-100">笔记</h3>
-                      </div>
-                      <p className="text-gray-300 mb-4">Research notes and methodological insights from my ongoing projects and experiments.</p>
-                      <div className="space-y-2">
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Cognitive Models</a>
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Experimental Design</a>
-                      </div>
-                  </motion.div>
-                  
-                  <motion.div className="p-6 rounded-lg group backdrop-blur-sm bg-black/20" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.2}} variants={fadeInVariants}>
-                      <div className="flex items-center mb-4">
-                           <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--klein-blue)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
-                              <FaBook className="w-5 h-5 text-white" />
-                          </motion.div>
-                          <h3 className="text-xl font-semibold chinese-font text-gray-100">论文介绍</h3>
-                      </div>
-                      <p className="text-gray-300 mb-4">Critical reviews and summaries of influential papers in AI and cognitive science.</p>
-                      <div className="space-y-2">
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Recent Publications</a>
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Classic Papers</a>
-                      </div>
-                  </motion.div>
-
-                  <motion.div className="p-6 rounded-lg group backdrop-blur-sm bg-black/20" initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.4}} variants={fadeInVariants}>
-                      <div className="flex items-center mb-4">
-                          <motion.div className="w-10 h-10 rounded-full flex items-center justify-center mr-3" style={{ backgroundColor: 'var(--old-red)' }} whileHover={{ scale: 1.1, rotate: 5 }}>
-                              <FaUser className="w-5 h-5 text-white" />
-                          </motion.div>
-                          <h3 className="text-xl font-semibold chinese-font text-gray-100">关于我</h3>
-                      </div>
-                      <p className="text-gray-300 mb-4">Personal reflections on academic life, research philosophy, and interdisciplinary thinking.</p>
-                      <div className="space-y-2">
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-old-red bg-red-500/20 hover:bg-red-500/40">Academic Journey</a>
-                          <a href="#" className="block px-3 py-1 rounded text-sm text-klein-blue bg-blue-500/20 hover:bg-blue-500/40">Teaching Philosophy</a>
-                      </div>
-                  </motion.div>
-              </div>
-        </div>
-      </section>
-      </main>
+  return (
+    <group>
+      <Line points={points} color="#888888" lineWidth={1} transparent opacity={0.3} />
+      <group ref={groupRef} rotation={[0, 0, offset]}> 
+        <mesh position={[radius, 0, 0]}>
+          <circleGeometry args={[size, 32]} />
+          <meshBasicMaterial color={color} />
+        </mesh>
+      </group>
+    </group>
   );
 };
 
-export default Home;
+function SolarSystem() {
+  return (
+    <group rotation={[0, 0, 0]}>
+      <mesh>
+          <sphereGeometry args={[0.25, 16, 16]} />
+          <meshBasicMaterial color="#ef4444" wireframe />
+      </mesh>
+      <PlanetOrbit radius={0.6} speed={0.6} color="#4ade80" size={0.06} offset={1} />
+      <PlanetOrbit radius={0.9} speed={0.4} color="#3b82f6" size={0.05} offset={3} />
+      <PlanetOrbit radius={1.3} speed={0.25} color="#d97706" size={0.04} offset={4} />
+      <PlanetOrbit radius={1.7} speed={0.15} color="#6b7280" size={0.08} offset={0} />
+    </group>
+  );
+}
+
+function LoadingBunny() {
+  return (
+    <Html center>
+      <div className="text-white font-mono text-sm bg-black/50 p-2 rounded backdrop-blur-sm whitespace-nowrap">
+        LOADING MODEL...
+      </div>
+    </Html>
+  );
+}
+
+// ==========================================
+// PART 3: 页面主逻辑 (引入 Header 版)
+// ==========================================
+
+export default function HomePage() {
+  const [isDarkMode, setIsDarkMode] = useState(true);
+
+  useEffect(() => {
+    document.body.style.margin = '0';
+    document.body.style.padding = '0';
+    document.body.style.backgroundColor = isDarkMode ? '#050505' : '#F9F9F9';
+  }, [isDarkMode]);
+
+  const fadeInVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1, 
+      y: 0, 
+      transition: { duration: 0.8, ease: 'easeOut' } 
+    },
+  };
+
+  const theme = {
+    bg: isDarkMode ? 'bg-[#050505]' : 'bg-[#F9F9F9]',
+    // glassNav 已移除，移交由 Header 组件内部处理
+    
+    // --- 字体颜色 ---
+    heroTitle: isDarkMode ? 'text-white drop-shadow-md' : 'text-black',
+    heroSubtitle: isDarkMode ? 'text-gray-200' : 'text-gray-800',
+    heroBody: isDarkMode ? 'text-gray-400' : 'text-gray-600',
+    
+    // --- 参数网格 ---
+    statsLabel: isDarkMode ? 'text-gray-500' : 'text-gray-400',
+    statsValue: isDarkMode ? 'text-gray-100' : 'text-gray-900',
+    statsBorder: isDarkMode ? 'border-white/10' : 'border-black/10',
+
+    // --- 大卡片样式 (Academic Profile) ---
+    academicProfileCard: isDarkMode
+      ? 'bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 shadow-2xl rounded-3xl p-10 md:p-16'
+      : 'bg-white/80 backdrop-blur-md border border-black/5 shadow-2xl rounded-3xl p-10 md:p-16',
+
+    // --- Footer ---
+    newFooterContainer: isDarkMode
+      ? 'bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 shadow-lg text-gray-200 rounded-3xl p-8 md:p-10'
+      : 'bg-white/80 backdrop-blur-md border border-black/5 shadow-lg text-gray-800 rounded-3xl p-8 md:p-10',
+    footerDivider: isDarkMode ? 'bg-white/10' : 'bg-black/10',
+    footerIcon: isDarkMode ? 'hover:text-white text-gray-400' : 'hover:text-black text-gray-500',
+
+    cardBorder: isDarkMode ? 'border-white/10' : 'border-black/5',
+    cardBg: isDarkMode ? 'bg-[#101010]' : 'bg-white', 
+    buttonPrimary: isDarkMode ? 'bg-white text-black hover:bg-gray-200 border-transparent' : 'bg-black text-white hover:bg-gray-800 border-transparent',
+    buttonOutline: isDarkMode ? 'border-white/30 hover:bg-white/10 text-white' : 'border-black/20 hover:bg-black/5 text-black',
+    
+    // --- 学术专栏 (Columns) 样式 ---
+    glassCard: isDarkMode 
+      ? 'bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 hover:bg-[#222] transition-all duration-300 shadow-lg' 
+      : 'bg-white/80 backdrop-blur-md border border-black/5 hover:bg-white shadow-lg',
+    
+    columnText: isDarkMode ? 'text-gray-400' : 'text-gray-600',
+    columnTitle: isDarkMode ? 'text-gray-100' : 'text-gray-900',
+    
+    // 图标背景
+    iconBgRed: 'bg-[#C72C41]',
+    iconBgBlue: 'bg-[#2B4C7E]', 
+    iconBgPurple: 'bg-[#C72C41]',
+    iconColor: 'text-white',
+
+    // 标签条样式
+    tagRed: isDarkMode 
+      ? 'bg-[#C72C41]/20 text-red-200 hover:bg-[#C72C41]/30' 
+      : 'bg-[#C72C41]/10 text-red-800 hover:bg-[#C72C41]/20',
+    tagBlue: isDarkMode 
+      ? 'bg-[#2B4C7E]/30 text-blue-200 hover:bg-[#2B4C7E]/40' 
+      : 'bg-[#2B4C7E]/10 text-blue-800 hover:bg-[#2B4C7E]/20',
+  };
+
+  return (
+    <div className={`w-full min-h-screen transition-colors duration-700 ease-in-out ${theme.bg} font-sans selection:bg-purple-500/30 flex flex-col`}>
+      
+      {/* HEADER - 现在通过组件引入 */}
+      <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
+      {/* HERO SECTION */}
+      <section className="relative w-full min-h-screen flex flex-col justify-center p-6 md:p-12">
+        {/* -mt-16 md:-mt-24 保持视觉重心上提 */}
+        <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-12 -mt-16 md:-mt-24">
+          <div className="w-full md:w-5/12 flex flex-col space-y-8 z-10 text-left">
+            <div>
+              <h1 className={`text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-[1.1] transition-colors duration-500 ${theme.heroTitle}`}>
+                Plote Motion Field
+              </h1>
+              <p className={`text-xl font-light mb-4 tracking-wide transition-colors duration-500 ${theme.heroSubtitle}`}>
+                Generative Motion Journal
+              </p>
+              <p className={`text-sm md:text-base leading-relaxed max-w-md transition-colors duration-500 ${theme.heroBody}`}>
+                Reconstructing the academic homepage: circular trajectories, beam scanning, 
+                and discrete particles form a cyclical visual system.
+                <br /><br />
+                Retaining a sense of technology and futurism in a minimalist 
+                {isDarkMode ? ' dark particle ' : ' light orbital '} system.
+              </p>
+            </div>
+            <div className="flex flex-wrap gap-4 pt-4">
+              <button className={`px-8 py-3 rounded-lg text-sm font-bold tracking-wide transition-all flex items-center gap-2 border ${theme.buttonPrimary}`}>
+                Explore Notes <ArrowRight size={16} />
+              </button>
+              <button className={`px-8 py-3 rounded-lg border text-sm font-bold tracking-wide transition-all ${theme.buttonOutline}`}>
+                View Papers
+              </button>
+            </div>
+             <div className={`grid grid-cols-3 gap-4 pt-8 border-t transition-colors duration-500 ${theme.statsBorder}`}>
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>LOOP</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>03</p>
+                </div>
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>MODE</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>{isDarkMode ? 'Monochrome' : 'Solar'}</p>
+                </div>
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>FIELD</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>Motion Graphic</p>
+                </div>
+            </div>
+          </div>
+          <div className="w-full md:w-6/12 flex justify-center md:justify-end">
+            <div className={`relative w-full aspect-square md:max-w-[550px] rounded-3xl overflow-hidden shadow-2xl transition-all duration-700 border ${theme.cardBorder} ${theme.cardBg}`}>
+              <div className={`absolute top-6 left-6 z-10 pointer-events-none transition-colors duration-700 ${isDarkMode ? 'text-white' : 'text-black'}`}>
+                <h2 className="text-lg font-bold uppercase tracking-widest">
+                  {isDarkMode ? 'INTERACTIVE_MESH' : 'ORBITAL_SYSTEM'}
+                </h2>
+                <div className={`h-px w-12 my-2 ${isDarkMode ? 'bg-white/30' : 'bg-black/30'}`} />
+                <p className="font-mono text-[10px] opacity-70">
+                  STATUS: 60 FPS LOCKED<br/>
+                  MODE: {isDarkMode ? 'PARTICLE_FLOW' : 'GRAVITY_SIM'}
+                </p>
+              </div>
+              <Canvas camera={{ position: [0, 0, 3], fov: 40 }} dpr={[1, 2]} gl={{ powerPreference: "high-performance", alpha: true }}>
+                <color attach="background" args={[isDarkMode ? '#101010' : '#ffffff']} />
+                <OrbitControls enableZoom={false} enablePan={false} minDistance={2} maxDistance={5} rotateSpeed={0.5} />
+                <React.Suspense fallback={<LoadingBunny />}>
+                  <Center>
+                    {isDarkMode ? ( <InteractiveBunny url={BUNNY_PLY_URL} /> ) : ( <SolarSystem /> )}
+                  </Center>
+                </React.Suspense>
+              </Canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT SECTION */}
+      <section className={`py-20 relative z-20 transition-colors duration-700 flex-grow`}>
+        {/* Profile - 大毛玻璃卡片包裹 */}
+        <motion.div 
+          id="profile"
+          className={`px-4 md:px-10 lg:px-20 max-w-6xl mx-auto mb-24 ${theme.academicProfileCard}`}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.1 }}
+          variants={fadeInVariants}
+        >
+          <motion.h2 className={`text-3xl md:text-5xl font-bold mb-16 text-center ${isDarkMode ? 'text-white' : 'text-black'}`}>
+            Academic Profile
+          </motion.h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+              {/* Research Interests */}
+              <div>
+                  <h3 className={`text-3xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Research Interests</h3>
+                  <p className={`${theme.columnText} leading-relaxed text-justify text-lg`}>
+                    My research interests lie in the theoretical foundations of generative modeling and their application to creating structurally coherent and physically plausible content. I approach this from a mathematical perspective, specifically studying diffusion and autoregressive models through their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. My initial focus is on applying these principles to enhance structure-aware image generation, ensuring synthesized images are not just visually convincing but also compositionally sound. Building upon this, I extend these concepts from 2D to 3D, aiming to develop generative systems that understand the physical world. I am particularly intrigued by creating physically-grounded 3D models that possess an intrinsic understanding of their own geometry and material properties, which I see as a crucial step towards realistically modeling Human-Object Interaction (HOI). By ensuring models are grounded in physical reality, we can better simulate how objects respond to interaction. This same principle extends to resolving key challenges in video generation, where ensuring long-term temporal consistency remains a significant hurdle. My ultimate ambition is to contribute to the development of World Models by creating generative systems that unify rigorous mathematical modeling with a deep, intuitive grasp of physical dynamics and creative intelligence.
+                  </p>
+              </div>
+              
+              {/* Biography */}
+              <div>
+                  <h3 className={`text-3xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Biography</h3>
+                  <p className={`${theme.columnText} leading-relaxed text-justify text-lg`}>
+                  I am an undergraduate with a dual academic focus in Computer Science and a physics-intensive Materials Science program. My passion for physics lies in understanding complex systems by deriving their behavior from first principles. I particularly enjoy rigorously working through foundational derivations, from using statistical mechanics to derive the Maxwell-Boltzmann distribution and Planck’s law of black-body radiation, to exploring the fundamental postulates that lead to the Schrödinger equation in quantum mechanics. During my sophomore year, I delved into foundational computer science through hands-on systems projects. In compilers, I implemented a miniature front-end pipeline that transforms source code into an Abstract Syntax Tree (AST) and then into an intermediate representation, upon which I applied semantic analysis and basic optimizations. In operating systems, I extended the xv6 kernel through a series of experiments, engineering core functionalities such as copy-on-write fork to optimize memory usage, as well as sophisticated process schedulers and thread pool optimizations to ensure fair resource allocation under concurrent workloads. Over the past two years, my focus has converged on the intersection of machine learning, mathematical reasoning, and interactive 3D generation. I have explored the theoretical underpinnings of diffusion models by investigating concepts such as Schrödinger Bridges with my knowledge of mathematical statistics. More recently, my work has shifted towards application, where I am exploring 3D interactivity from a physics-based perspective. My current goal is to develop AI systems that can understand and interact with the world in a physically coherent manner.
+                  </p>
+              </div>
+          </div>
+          
+          {/* Affiliations */}
+          <div className="mt-16 pt-8 border-t border-white/10">
+              <h3 className={`text-2xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Affiliations</h3>
+              <div className="flex flex-wrap gap-4">
+                  <div className={`px-6 py-3 rounded-full bg-white/10 text-gray-400 border border-white/10 hover:bg-white/20 transition-colors cursor-default text-sm font-medium`}>
+                    Peking University (Visiting)
+                  </div>
+                  <div className={`px-6 py-3 rounded-full bg-white/10 text-gray-400 border border-white/10 hover:bg-white/20 transition-colors cursor-default text-sm font-medium`}>
+                    Institute of Automation, CAS (Visiting)
+                  </div>
+              </div>
+          </div>
+        </motion.div>
+
+        {/* Columns */}
+        <div className={`px-4 md:px-10 lg:px-20 max-w-7xl mx-auto border-t pt-20 mb-10 ${isDarkMode ? 'border-white/10' : 'border-black/10'}`}>
+            <motion.h2 
+              className={`text-3xl md:text-4xl font-bold mb-16 text-center ${theme.columnTitle}`}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.5 }}
+              variants={fadeInVariants}
+            >
+              Academic Columns
+            </motion.h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                
+                {/* 1. Notes */}
+                <motion.div 
+                  className={`p-8 rounded-2xl border border-transparent ${theme.glassCard}`}
+                  initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants}
+                >
+                    <div className="flex items-center mb-6">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgRed}`}>
+                            <FaFlask className={`w-4 h-4 ${theme.iconColor}`} />
+                        </div>
+                        <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>Notes</h3>
+                    </div>
+                    <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Research notes and methodological insights from my ongoing projects.</p>
+                    <div className="space-y-3">
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                           Cognitive Models
+                        </a>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                           Experimental Design
+                        </a>
+                    </div>
+                </motion.div>
+                
+                {/* 2. Papers */}
+                <motion.div 
+                  className={`p-8 rounded-2xl border border-transparent ${theme.glassCard}`}
+                  initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.1}} variants={fadeInVariants}
+                >
+                    <div className="flex items-center mb-6">
+                         <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgBlue}`}>
+                            <FaBook className={`w-4 h-4 ${theme.iconColor}`} />
+                        </div>
+                        <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>Papers</h3>
+                    </div>
+                    <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Critical reviews and summaries of influential papers in AI.</p>
+                    <div className="space-y-3">
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                           Recent Publications
+                        </a>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                           Classic Papers
+                        </a>
+                    </div>
+                </motion.div>
+
+                {/* 3. About Me */}
+                <motion.div 
+                  className={`p-8 rounded-2xl border border-transparent ${theme.glassCard}`}
+                  initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.2}} variants={fadeInVariants}
+                >
+                    <div className="flex items-center mb-6">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgPurple}`}>
+                            <FaUser className={`w-4 h-4 ${theme.iconColor}`} />
+                        </div>
+                        <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>About Me</h3>
+                    </div>
+                    <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Personal reflections on academic life and philosophy.</p>
+                    <div className="space-y-3">
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                           Academic Journey
+                        </a>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                           Teaching Philosophy
+                        </a>
+                    </div>
+                </motion.div>
+            </div>
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="w-full py-10 px-4 md:px-10 lg:px-20 flex justify-center relative z-10">
+        <div className={`w-full max-w-6xl rounded-3xl border p-8 md:p-10 transition-all duration-500 ${theme.newFooterContainer}`}>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+               <h3 className="text-xl font-bold tracking-tight mb-1">Plote</h3>
+               <p className="opacity-80 text-sm">Academic Homepage</p>
+            </div>
+            <div className="flex gap-6 items-center">
+               <a href="#" className={`transition-colors duration-300 ${theme.footerIcon}`} aria-label="GitHub"> <FaGithub size={24} /> </a>
+               <a href="#" className={`transition-colors duration-300 ${theme.footerIcon}`} aria-label="LinkedIn"> <FaLinkedin size={24} /> </a>
+               <a href="#" className={`transition-colors duration-300 ${theme.footerIcon}`} aria-label="Twitter"> <FaTwitter size={24} /> </a>
+            </div>
+          </div>
+          <div className={`w-full h-px my-8 ${theme.footerDivider}`}></div>
+          <div className="text-center text-sm opacity-60">
+            <p>© 2025 Plote. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+
+    </div>
+  );
+}

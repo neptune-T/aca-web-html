@@ -1,403 +1,296 @@
-import { FaTrophy, FaGlobeAmericas, FaMapMarkedAlt } from 'react-icons/fa';
+import React, { useState, useEffect, useMemo } from 'react';
+import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import * as echarts from 'echarts';
-import { useEffect, useState, Suspense, useRef } from 'react';
+import { motion } from 'framer-motion';
+import Header from '@/components/Header';
+import { Trophy, Globe, Award, MapPin } from 'lucide-react';
 import { getTravelData } from '@/lib/travel';
 import { getHonorsData } from '@/lib/honors';
-import Head from 'next/head';
 
-// Dynamic import for client-side only
-const EChartsReactCore = dynamic(() => import('echarts-for-react').then(mod => mod.default), { ssr: false });
+const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
-type AboutProps = {
-  travelData: {
-    world: Record<string, string[]>;
-    china: Record<string, string[]>;
-    details: {
-      world: Record<string, { description: string; visits: number }>;
-      china: Record<string, { description: string; visits: number }>;
-    };
+type TravelData = {
+  details: {
+    world: Record<string, { description: string; visits: number }>;
+    china: Record<string, { description: string; visits: number }>;
   };
-  honorsData: Array<{
-    title: string;
-    description: string;
-    borderColor: string;
-  }>;
 };
 
-const About = ({ travelData, honorsData }: AboutProps) => {
-  const visitedPlaces = { world: travelData.world, china: travelData.china };
-  const placeDetails = travelData.details;
+type Honor = {
+  title: string;
+  description: string;
+  date: string;
+};
 
-  const [currentYear, setCurrentYear] = useState('2024');
-  const [currentMap, setCurrentMap] = useState<'world' | 'china'>('world');
-  const [mapLoaded, setMapLoaded] = useState(false);
-  const [hoveredPlace, setHoveredPlace] = useState<string | null>(null);
-  const timelineRef = useRef<HTMLDivElement>(null);
-
-  // 获取所有可用年份
-  const allYears = Object.keys(visitedPlaces.world).sort();
-
-  // 动态生成地图配置
-  const getMapOption = () => {
-    const mapType = currentMap;
-    const places = visitedPlaces[mapType][currentYear] || [];
-    const mapData = places.map((name: string) => ({
-      name,
-      value: 1,
-      ...placeDetails[mapType][name]
-    }));
-
-    return {
-      backgroundColor: '#1a1a1a',
-      title: { 
-        text: `${currentYear}年访问过的${mapType === 'world' ? '国家' : '省份'}`,
-        textStyle: { color: '#fff', fontSize: 16 },
-        left: 'center'
-      },
-      tooltip: {
-        trigger: 'item',
-        backgroundColor: 'rgba(0, 0, 0, 0.8)',
-        borderColor: '#777',
-        borderWidth: 1,
-        textStyle: { color: '#fff' },
-        formatter: (params: { name: string; data?: { description: string; visits: number } }) => {
-          const { name, data } = params;
-          if (data) {
-            return `
-              <div style="padding: 8px; max-width: 250px;">
-                <div style="font-size: 16px; font-weight: bold; margin-bottom: 5px; color: #4fc3f7">${name}</div>
-                <div style="margin-bottom: 3px;"><span style="color: #bbb">描述:</span> ${data.description}</div>
-                <div><span style="color: #bbb">访问次数:</span> ${data.visits}</div>
-              </div>
-            `;
-          }
-          return name;
-        }
-      },
-      series: [{
-        type: 'map',
-        map: mapType,
-        roam: true,
-        zoom: mapType === 'world' ? 1.2 : 1.1,
-        center: mapType === 'world' ? [30, 30] : [105, 38],
-        emphasis: {
-          label: {
-            show: true,
-            color: '#fff',
-            fontSize: 12,
-            fontWeight: 'bold',
-            backgroundColor: 'rgba(0,0,0,0.7)',
-            padding: [4, 8]
-          },
-          itemStyle: {
-            areaColor: '#ff6b6b',
-            shadowBlur: 15,
-            shadowColor: 'rgba(255, 255, 255, 0.8)',
-            borderWidth: 2,
-            borderColor: '#fff'
-          }
-        },
-        itemStyle: {
-          areaColor: '#2c3e50',
-          borderColor: '#34495e',
-          borderWidth: 0.5
-        },
-        data: mapData,
-        nameMap: mapType === 'china' ? {
-          '北京': '北京', '上海': '上海', '广东': '广东', '江苏': '江苏', 
-          '浙江': '浙江', '四川': '四川', '陕西': '陕西', '云南': '云南', 
-          '湖南': '湖南', '湖北': '湖北'
-        } : undefined
-      }],
-      visualMap: {
-        type: 'piecewise',
-        pieces: [
-          { value: 1, label: '已访问', color: '#3498db' },
-          { value: 0, label: '未访问', color: '#2c3e50' }
-        ],
-        textStyle: { color: '#fff' },
-        left: 'right',
-        top: 'bottom',
-        orient: 'vertical'
-      }
-    };
-  };
-
-  // 加载地图数据
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
-
-    const loadMaps = async () => {
-      try {
-        const [worldRes, chinaRes] = await Promise.all([
-          fetch(`${basePath}/world.json`),
-          fetch(`${basePath}/china.json`)
-        ]);
-        
-        if (!worldRes.ok || !chinaRes.ok) throw new Error('Failed to fetch map data');
-        
-        const [worldJson, chinaJson] = await Promise.all([
-          worldRes.json(),
-          chinaRes.json()
-        ]);
-        
-        echarts.registerMap('world', worldJson);
-        echarts.registerMap('china', chinaJson);
-        console.log('Maps registered successfully');
-        setMapLoaded(true);
-      } catch (error) {
-        console.error('Error loading map data:', error);
-      }
-    };
-
-    loadMaps();
-  }, []);
-
-  // 处理地图事件
-  const onChartEvents = {
-    mouseover: (params: { name: string; data?: unknown }) => {
-      if (params.data) {
-        setHoveredPlace(params.name);
-      }
-    },
-    mouseout: () => {
-      setHoveredPlace(null);
-    }
-  };
-
-  return (
-    <>
-      <Head>
-        <title>About Me | My Personal Website</title>
-        <meta name="description" content="Learn more about my background, honors, and travels." />
-      </Head>
-      <div className="min-h-screen text-gray-200">
-        <main className="pt-28 pb-16 container mx-auto px-6 max-w-6xl">
-          <h1 className="text-5xl font-bold font-ibm-plex-serif text-white mb-8">About Me</h1>
-          
-          <section className="mb-12 bg-black/20 backdrop-blur-sm p-8 rounded-lg">
-            <p className="text-lg leading-relaxed text-gray-300">
-              I am a passionate student with a deep interest in the intersection of mathematics, physics, and artificial intelligence.
-            </p>
-            <p className="mt-4 text-lg leading-relaxed text-gray-300">
-              This page contains my academic profile, curriculum vitae, and contact information.
-            </p>
-          </section>
-
-          {/* 旅行地图部分 - 移到前面 */}
-          <section className="mb-12 bg-black/20 backdrop-blur-sm p-8 rounded-lg">
-            <h2 className="text-3xl font-bold text-gray-100 mb-6">Places I&apos;ve Visited</h2>
-            
-            {/* 地图切换选项卡 */}
-            <div className="flex mb-6 border-b border-gray-700">
-              <button 
-                onClick={() => setCurrentMap('world')}
-                className={`flex items-center px-6 py-3 font-semibold transition-all border-b-2 ${
-                  currentMap === 'world' 
-                    ? 'border-blue-500 text-blue-400 bg-blue-900/20' 
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                <FaGlobeAmericas className="mr-2" />
-                世界地图
-              </button>
-              <button 
-                onClick={() => setCurrentMap('china')}
-                className={`flex items-center px-6 py-3 font-semibold transition-all border-b-2 ${
-                  currentMap === 'china' 
-                    ? 'border-red-500 text-red-400 bg-red-900/20' 
-                    : 'border-transparent text-gray-400 hover:text-gray-300'
-                }`}
-              >
-                <FaMapMarkedAlt className="mr-2" />
-                中国地图
-              </button>
-            </div>
-
-            {/* 地图容器 */}
-            <div className="h-96 w-full mb-8 rounded-lg overflow-hidden border border-gray-700 bg-gray-900">
-              <Suspense fallback={
-                <div className="h-full flex items-center justify-center">
-                  <p className="text-xl text-gray-400">Loading map...</p>
-                </div>
-              }>
-                {mapLoaded ? (
-                  <EChartsReactCore 
-                    option={getMapOption()} 
-                    style={{ height: '100%', width: '100%' }} 
-                    opts={{ renderer: 'canvas' }}
-                    onEvents={onChartEvents}
-                  />
-                ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <p className="text-xl text-gray-400">Loading map data...</p>
-                  </div>
-                )}
-              </Suspense>
-            </div>
-
-            {/* 时间轴式年份选择器 - 宽度与地图一致 */}
-            <div ref={timelineRef} className="relative mt-12 mb-20 w-full">
-              {/* 时间轴线 */}
-              <div className="absolute left-0 right-0 top-2 h-0.5 bg-gray-700 transform -translate-y-1/2"></div>
-              
-              <div className="relative flex justify-between">
-                {allYears.map((year, index) => (
-                  <div 
-                    key={year}
-                    className="relative flex flex-col items-center"
-                    style={{ 
-                      left: `${(index / (allYears.length - 1)) * 100}%`,
-                      transform: 'translateX(-50%)',
-                      position: 'absolute'
-                    }}
-                  >
-                    {/* 时间轴点 */}
-                    <button
-                      onClick={() => setCurrentYear(year)}
-                      onMouseEnter={() => {}}
-                      onMouseLeave={() => {}}
-                      className={`relative z-10 w-6 h-6 rounded-full transition-all duration-300 ${
-                        currentYear === year 
-                          ? 'bg-blue-500 shadow-lg shadow-blue-500/50 scale-125' 
-                          : 'bg-gray-600 hover:bg-gray-500'
-                      }`}
-                    >
-                      {/* 悬浮提示 */}
-                      {/* {(hoveredYear === year || currentYear === year) && (
-                        <div className="absolute bottom-full mb-2 px-3 py-1 bg-gray-800 text-white text-sm rounded-md whitespace-nowrap">
-                          {year}年
-                          <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                        </div>
-                      )} */}
-                    </button>
-                    
-                    {/* 年份标签 */}
-                    <span className={`mt-2 text-sm transition-all ${
-                      currentYear === year ? 'text-blue-400 font-bold' : 'text-gray-500'
-                    }`}>
-                      {year}
-                    </span>
-                    
-                    {/* 当前年份指示器 */}
-                    {currentYear === year && (
-                      <div className="absolute top-full mt-1 w-3 h-3 transform rotate-45 bg-blue-500"></div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* 地点介绍面板 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-              <div className="bg-gray-900/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-100 mb-3">
-                  {hoveredPlace ? '地点详情' : '访问统计'}
-                </h3>
-                <div className="space-y-2">
-                  {hoveredPlace ? (
-                    <div>
-                      <h4 className="text-lg font-semibold text-white mb-2">{hoveredPlace}</h4>
-                      <p className="text-gray-300 mb-2">
-                        <strong>描述:</strong> {placeDetails[currentMap][hoveredPlace]?.description || '暂无描述'}
-                      </p>
-                      <p className="text-gray-300">
-                        <strong>访问次数:</strong> {placeDetails[currentMap][hoveredPlace]?.visits || 1}
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">当前年份:</span>
-                        <span className="text-blue-400">{currentYear}年</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">访问的{currentMap === 'world' ? '国家' : '省份'}:</span>
-                        <span className="text-green-400">{visitedPlaces[currentMap][currentYear]?.length || 0}个</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">地图类型:</span>
-                        <span className="text-yellow-400">{currentMap === 'world' ? '世界地图' : '中国地图'}</span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-              
-              <div className="bg-gray-900/50 rounded-lg p-4">
-                <h3 className="text-lg font-semibold text-gray-100 mb-3">使用提示</h3>
-                <ul className="text-gray-400 text-sm space-y-1">
-                  <li>• 蓝色区域表示已访问的地方</li>
-                  <li>• 鼠标悬停在地图上查看详细信息</li>
-                  <li>• 使用鼠标滚轮缩放地图</li>
-                  <li>• 拖拽地图可以平移视图</li>
-                  <li>• 点击时间轴点切换年份</li>
-                  <li>• 在世界地图中点击中国可查看省份详情</li>
-                </ul>
-              </div>
-            </div>
-
-            {/* 当前年份的地点列表 */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold text-gray-100 mb-4">
-                {currentYear}年访问的{currentMap === 'world' ? '国家' : '省份'}
-              </h3>
-              <div className="bg-gray-900/50 rounded-lg p-4">
-                <div className="flex flex-wrap gap-2">
-                  {(visitedPlaces[currentMap][currentYear] || []).map((place: string, index) => (
-                    <div 
-                      key={index}
-                      className={`flex items-center py-2 px-3 rounded transition-colors cursor-pointer ${
-                        hoveredPlace === place ? 'bg-blue-900/50' : 'bg-gray-800/50'
-                      }`}
-                      onMouseEnter={() => setHoveredPlace(place)}
-                      onMouseLeave={() => setHoveredPlace(null)}
-                    >
-                      <span className="text-gray-200">{place}</span>
-                      <span className="ml-2 text-blue-400 text-sm bg-blue-900/30 px-2 py-1 rounded">
-                        {placeDetails[currentMap][place]?.visits || 1}次
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* Honors and Awards Section */}
-          <section className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-100 mb-6 flex items-center">
-              <FaTrophy className="mr-3 text-klein-blue" />
-              Honors & Awards
-            </h2>
-            <div className="space-y-4">
-              {honorsData.map((honor, index) => (
-                <div key={index} className={`p-4 border-l-4 border-${honor.borderColor} bg-black/20 backdrop-blur-sm rounded-r-lg`}>
-                  <p className="font-semibold text-lg text-gray-100">{honor.title}</p>
-                  <p className="text-gray-400">{honor.description}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-        </main>
-      </div>
-    </>
-  );
+type AboutProps = {
+  travelData: TravelData;
+  honorsData: Honor[];
 };
 
 export async function getStaticProps() {
   const travelData = getTravelData();
   const honorsData = getHonorsData();
   return {
-    props: {
-      travelData,
-      honorsData,
-    },
+    props: { travelData, honorsData },
   };
 }
 
-export default About;
+export default function About({ travelData, honorsData }: AboutProps) {
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const [mapScope, setMapScope] = useState<'world' | 'china'>('world');
+  const [mapLoaded, setMapLoaded] = useState(false);
+
+  useEffect(() => {
+    const bg = isDarkMode ? '#050505' : '#F9F9F9';
+    document.body.style.backgroundColor = bg;
+    document.documentElement.style.backgroundColor = bg;
+  }, [isDarkMode]);
+
+  useEffect(() => {
+    const loadMapData = async () => {
+      try {
+        const worldRes = await fetch('/world.json');
+        const chinaRes = await fetch('/china.json');
+        if (!worldRes.ok || !chinaRes.ok) return;
+        const worldJson = await worldRes.json();
+        const chinaJson = await chinaRes.json();
+        echarts.registerMap('world', worldJson);
+        echarts.registerMap('china', chinaJson);
+        setMapLoaded(true);
+      } catch (err) {
+        console.error('Map loading failed:', err);
+      }
+    };
+    loadMapData();
+  }, []);
+
+  const theme = {
+    wrapper: isDarkMode ? 'bg-[#050505] text-white' : 'bg-[#F9F9F9] text-[#1a1a1a]',
+    titleColor: isDarkMode ? 'text-white' : 'text-black',
+    textColor: isDarkMode ? 'text-gray-300' : 'text-gray-600',
+    subText: isDarkMode ? 'text-gray-500' : 'text-gray-400',
+    card: isDarkMode
+      ? 'bg-[#1a1a1a]/80 backdrop-blur-md border border-white/5 shadow-xl'
+      : 'bg-white/80 backdrop-blur-md border border-black/5 shadow-sm hover:shadow-md',
+    pillActive: isDarkMode 
+      ? 'bg-white text-black shadow-[0_0_15px_rgba(255,255,255,0.4)]'
+      : 'bg-black text-white shadow-lg',
+    pillInactive: isDarkMode
+      ? 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+      : 'bg-black/5 text-gray-600 hover:bg-black/10 hover:text-black',
+    divider: isDarkMode ? 'border-white/10' : 'border-black/10',
+    mapBg: 'transparent',
+    mapAreaColor: isDarkMode ? '#222' : '#e0e0e0',
+    mapBorderColor: isDarkMode ? '#333' : '#fff',
+    mapHighlight: isDarkMode ? '#ffffff' : '#111111',
+    mapHighlightShadow: isDarkMode ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.3)',
+  };
+
+  const getOption = () => {
+    if (!mapLoaded) return {};
+
+    const detailsData = travelData.details[mapScope === 'world' ? 'world' : 'china'];
+    const visitedList = Object.keys(detailsData);
+    
+    const data = visitedList.map(name => ({
+      name: name,
+      value: detailsData[name].visits,
+      details: detailsData[name].description,
+      itemStyle: {
+        areaColor: theme.mapHighlight,
+        shadowBlur: 15,
+        shadowColor: theme.mapHighlightShadow
+      }
+    }));
+
+    return {
+      backgroundColor: theme.mapBg,
+      tooltip: {
+        trigger: 'item',
+        backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
+        borderColor: isDarkMode ? '#333' : '#ddd',
+        textStyle: { color: isDarkMode ? '#fff' : '#000' },
+        formatter: (params: any) => {
+          if (!params.data) return params.name;
+          const info = params.data;
+          return `
+            <div style="font-weight:bold; margin-bottom:4px;">${params.name}</div>
+            <div style="font-size:12px; opacity:0.8;">Visits: ${info.value}</div>
+            ${info.details ? `<div style="font-size:12px; opacity:0.8; margin-top:2px;">${info.details}</div>` : ''}
+          `;
+        }
+      },
+      geo: {
+        map: mapScope,
+        roam: true,
+        
+        // --- [修改点] 坐标配置 ---
+        center: mapScope === 'world' 
+          ? [150, 25]  // 你指定的太平洋视角
+          : [105, 36], // 中国中心微调
+        
+        zoom: 1.2, 
+
+        label: { show: false },
+        itemStyle: {
+          areaColor: theme.mapAreaColor,
+          borderColor: theme.mapBorderColor,
+          borderWidth: 1,
+        },
+        emphasis: {
+          itemStyle: {
+            areaColor: theme.mapHighlight,
+            shadowBlur: 10,
+            shadowColor: theme.mapHighlightShadow
+          },
+          label: { show: false }
+        }
+      },
+      series: [
+        {
+          type: 'map',
+          geoIndex: 0,
+          data: data,
+        }
+      ]
+    };
+  };
+
+  const totalPlaces = Object.keys(travelData.details[mapScope === 'world' ? 'world' : 'china']).length;
+
+  return (
+    <>
+      <Head>
+        <title>About | Plote Motion Field</title>
+      </Head>
+
+      <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-purple-500/30 flex flex-col ${theme.wrapper}`}>
+        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+
+        <main className="flex-grow pt-32 md:pt-40 px-4 md:px-10 lg:px-20 pb-20 max-w-7xl mx-auto w-full">
+          
+          {/* 1. Title & Intro */}
+          <header className="mb-16 text-center md:text-left">
+            <motion.h1 
+              className={`text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-tight ${theme.titleColor}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+            >
+              About Me
+            </motion.h1>
+            <motion.div 
+              className={`p-8 rounded-3xl ${theme.card}`}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+            >
+              <p className={`text-lg leading-relaxed ${theme.textColor}`}>
+                I am a passionate researcher and developer navigating the spaces between generative AI, cognitive science, and interactive design. This page chronicles my journey—both geographically and academically.
+              </p>
+            </motion.div>
+          </header>
+
+          {/* 2. Travel Map Section */}
+          <section className="mb-20">
+            <div className="flex items-center justify-between mb-8">
+              <h2 className={`text-3xl font-bold ${theme.titleColor} flex items-center gap-3`}>
+                <Globe className="w-6 h-6 opacity-70" />
+                Footprints
+              </h2>
+              
+              {/* Map Switcher */}
+              <div className="flex gap-2">
+                {(['world', 'china'] as const).map((scope) => (
+                  <button
+                    key={scope}
+                    onClick={() => setMapScope(scope)}
+                    className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all ${
+                      mapScope === scope ? theme.pillActive : theme.pillInactive
+                    }`}
+                  >
+                    {scope.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Map Container */}
+            <motion.div 
+              className={`relative w-full h-[500px] rounded-3xl overflow-hidden flex items-center justify-center ${theme.card}`}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              {mapLoaded ? (
+                <ReactECharts 
+                  option={getOption()} 
+                  style={{ height: '100%', width: '100%' }}
+                  opts={{ renderer: 'svg' }}
+                  notMerge={true} 
+                  lazyUpdate={true}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-sm opacity-50">
+                  Loading Cartography...
+                </div>
+              )}
+            </motion.div>
+            
+            <div className="mt-6 flex justify-between items-center px-4">
+               <div className={`flex items-center gap-2 text-sm font-mono ${theme.subText}`}>
+                 <MapPin size={14} />
+                 <span>Total Locations</span>
+               </div>
+               <div className={`text-lg font-bold ${theme.titleColor}`}>
+                 {totalPlaces} <span className="text-sm font-normal opacity-60">visited</span>
+               </div>
+            </div>
+          </section>
+
+          {/* 3. Honors & Awards Section */}
+          <section>
+            <h2 className={`text-3xl font-bold ${theme.titleColor} mb-8 flex items-center gap-3`}>
+              <Trophy className="w-6 h-6 opacity-70" />
+              Honors & Awards
+            </h2>
+            
+            <div className="grid grid-cols-1 gap-4">
+              {honorsData.map((honor, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 transition-all ${theme.card}`}
+                >
+                  <div className="flex items-start gap-4">
+                    <div className={`mt-1 p-2 rounded-full ${isDarkMode ? 'bg-white/10' : 'bg-black/5'}`}>
+                      <Award size={20} className={theme.textColor} />
+                    </div>
+                    <div>
+                      <h3 className={`text-lg font-bold ${theme.titleColor}`}>{honor.title}</h3>
+                      <p className={`text-sm ${theme.subText}`}>{honor.description}</p>
+                    </div>
+                  </div>
+                  <div className={`text-xs font-mono px-4 py-1.5 rounded-full border ${isDarkMode ? 'border-white/10 text-gray-400 bg-white/5' : 'border-black/10 text-gray-500 bg-black/5'}`}>
+                    {honor.date || 'Award'} 
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
+        </main>
+
+        <footer className={`w-full py-10 text-center text-sm opacity-60 relative z-10 ${theme.textColor}`}>
+           <div className={`max-w-7xl mx-auto border-t pt-8 ${theme.divider}`} />
+           <p>© 2025 Plote. All rights reserved.</p>
+        </footer>
+
+      </div>
+    </>
+  );
+}
