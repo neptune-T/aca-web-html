@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect } from 'react'; // [修改1] 删除了 useMemo
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import * as echarts from 'echarts';
@@ -111,7 +111,8 @@ export default function About({ travelData, honorsData }: AboutProps) {
         backgroundColor: isDarkMode ? 'rgba(0,0,0,0.8)' : 'rgba(255,255,255,0.9)',
         borderColor: isDarkMode ? '#333' : '#ddd',
         textStyle: { color: isDarkMode ? '#fff' : '#000' },
-        formatter: (params: any) => {
+        // [修改2] 添加了 eslint-disable-line 来忽略 any 类型检查
+        formatter: (params: any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
           if (!params.data) return params.name;
           const info = params.data;
           return `
@@ -125,10 +126,9 @@ export default function About({ travelData, honorsData }: AboutProps) {
         map: mapScope,
         roam: true,
         
-        // --- [修改点] 坐标配置 ---
         center: mapScope === 'world' 
-          ? [150, 25]  // 你指定的太平洋视角
-          : [105, 36], // 中国中心微调
+          ? [150, 25]  
+          : [105, 36], 
         
         zoom: 1.2, 
 
@@ -284,11 +284,6 @@ export default function About({ travelData, honorsData }: AboutProps) {
           </section>
 
         </main>
-
-        <footer className={`w-full py-10 text-center text-sm opacity-60 relative z-10 ${theme.textColor}`}>
-           <div className={`max-w-7xl mx-auto border-t pt-8 ${theme.divider}`} />
-           <p>© 2025 Plote. All rights reserved.</p>
-        </footer>
 
       </div>
     </>

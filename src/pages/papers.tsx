@@ -1,15 +1,22 @@
-import { getSortedPapersData } from '@/lib/papers'; // 引入刚才第一步写好的逻辑
+import { getSortedPapersData } from '@/lib/papers';
 import Head from 'next/head';
-import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-// 如果没有安装 lucide-react，请运行 npm install lucide-react
 import { Calendar, MapPin, Users, FileText, Github, Globe } from 'lucide-react';
 
-// --- 数据获取 (Next.js 服务端渲染) ---
+// --- 数据获取 (修复点在这里) ---
 export async function getStaticProps() {
-  const allPapersData = getSortedPapersData();
+  const rawData = getSortedPapersData();
+  
+  // 🔴 关键修复：遍历数据，强制把 date 转成字符串
+  const allPapersData = rawData.map((paper: any) => ({
+    ...paper,
+    // 如果是 Date 对象就转 ISO 字符串，如果是字符串就保持原样
+    date: paper.date instanceof Date ? paper.date.toISOString() : String(paper.date),
+  }));
+
   return {
     props: {
       allPapersData,
@@ -17,7 +24,7 @@ export async function getStaticProps() {
   };
 }
 
-// 定义 Paper 类型
+// 定义 Paper 类型接口
 type Paper = {
   id: string;
   title: string;
@@ -42,21 +49,20 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
     document.documentElement.style.backgroundColor = bg;
   }, [isDarkMode]);
 
-  // --- 样式主题 (保持黑白高对比 + 毛玻璃) ---
+  // --- 样式主题 ---
   const theme = {
     wrapper: isDarkMode ? 'bg-[#050505] text-white' : 'bg-[#F9F9F9] text-[#1a1a1a]',
-    
     titleColor: isDarkMode ? 'text-white' : 'text-black',
     textColor: isDarkMode ? 'text-gray-300' : 'text-gray-600',
     metaColor: isDarkMode ? 'text-gray-400' : 'text-gray-500',
     accentColor: isDarkMode ? 'text-blue-300' : 'text-blue-600',
 
-    // 卡片：深灰毛玻璃 vs 白毛玻璃
+    // 卡片：深灰玻璃 vs 白玻璃
     card: isDarkMode
-      ? 'bg-[#141414]/90 backdrop-blur-md border border-white/10 hover:border-white/30 shadow-xl'
-      : 'bg-white/90 backdrop-blur-md border border-black/5 hover:border-black/10 shadow-sm hover:shadow-md',
+      ? 'bg-[#141414] border border-white/10 hover:border-white/30 shadow-xl overflow-hidden'
+      : 'bg-white border border-black/5 hover:border-black/10 shadow-sm hover:shadow-md overflow-hidden',
     
-    // 链接按钮
+    // 链接按钮 (Small Pills)
     linkBtn: isDarkMode
       ? 'bg-white/10 hover:bg-white/20 text-white border border-white/10'
       : 'bg-black/5 hover:bg-black/10 text-black border border-black/5',
@@ -97,7 +103,7 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
             </motion.p>
           </header>
 
-          {/* 论文列表 */}
+          {/* 论文列表 (Grid Layout) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {allPapersData.map((paper, index) => (
               <motion.article
@@ -105,18 +111,20 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 + 0.2 }}
-                className={`group rounded-3xl flex flex-col transition-all duration-300 overflow-hidden ${theme.card}`}
+                className={`group rounded-3xl flex flex-col transition-all duration-300 ${theme.card}`}
               >
                 
-                {/* 1. 封面图区域 */}
+                {/* 1. 封面图区域 (如果有图片) */}
                 {paper.image && (
                   <div className="relative w-full h-64 overflow-hidden border-b border-opacity-10 border-gray-500">
-                    <img 
+                    <Image 
                       src={paper.image} 
-                      alt={paper.title} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      alt={paper.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
-                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-black/60 backdrop-blur-md text-white border border-white/10">
+                    <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-black/50 backdrop-blur-md text-white border border-white/10 z-10">
                       {paper.venue}
                     </div>
                   </div>
@@ -125,6 +133,7 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                 {/* 2. 内容区域 */}
                 <div className="p-8 flex flex-col flex-grow">
                   
+                  {/* Meta Info (没有图片时显示 Venue) */}
                   {!paper.image && (
                     <div className={`flex items-center gap-2 text-xs font-mono mb-4 uppercase tracking-wider ${theme.accentColor}`}>
                       <MapPin size={12} />
@@ -132,25 +141,27 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                     </div>
                   )}
 
+                  {/* Title */}
                   <h2 className={`text-2xl font-bold mb-3 leading-tight group-hover:underline decoration-2 decoration-current underline-offset-4 ${theme.titleColor}`}>
                     {paper.title}
                   </h2>
 
+                  {/* Authors */}
                   <div className={`flex items-start gap-2 text-sm mb-5 ${theme.metaColor}`}>
                     <Users size={14} className="mt-1 flex-shrink-0" />
                     <span className="italic">{paper.authors}</span>
                   </div>
 
+                  {/* Summary */}
                   <p className={`text-sm leading-relaxed mb-8 line-clamp-3 flex-grow ${theme.textColor}`}>
                     {paper.summary}
                   </p>
 
-                  {/* 3. 底部操作栏 */}
+                  {/* 3. 底部操作栏 (链接按钮) */}
                   <div className={`pt-6 border-t border-dashed flex flex-wrap items-center gap-3 ${theme.divider}`}>
                     <div className={`flex items-center gap-2 text-xs font-mono mr-auto opacity-60 ${theme.metaColor}`}>
                       <Calendar size={12} />
-                      {/* 防止 substr 报错，增加空值检查 */}
-                      {(paper.date || '').substring(0, 7)}
+                      {paper.date.substring(0, 7)}
                     </div>
 
                     {paper.arxiv_url && (

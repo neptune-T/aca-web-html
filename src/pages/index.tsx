@@ -5,7 +5,7 @@ import { Canvas, useFrame, useLoader, ThreeEvent } from '@react-three/fiber';
 import { OrbitControls, Center, Html, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
-import { ArrowRight } from 'lucide-react'; // Sun, Moon 移到了 Header 组件里，这里不需要了
+import { ArrowRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { FaBook, FaFlask, FaUser, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
 
@@ -13,7 +13,7 @@ import { FaBook, FaFlask, FaUser, FaGithub, FaLinkedin, FaTwitter } from 'react-
 import Header from '@/components/Header';
 
 // ==========================================
-// PART 1: 3D 兔子组件 (完整逻辑)
+// PART 1: 3D 兔子组件 (完整逻辑 - 保持不变)
 // ==========================================
 const BUNNY_PLY_URL = '/models/bunny.ply';
 
@@ -123,7 +123,7 @@ function InteractiveBunny({ url }: { url: string }) {
 }
 
 // ==========================================
-// PART 2: 星际系统组件
+// PART 2: 星际系统组件 (保持不变)
 // ==========================================
 const PlanetOrbit = ({ radius, speed, color, size, offset = 0 }: { radius: number, speed: number, color: string, size: number, offset?: number }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -182,7 +182,7 @@ function LoadingBunny() {
 }
 
 // ==========================================
-// PART 3: 页面主逻辑 (引入 Header 版)
+// PART 3: 页面主逻辑
 // ==========================================
 
 export default function HomePage() {
@@ -205,7 +205,6 @@ export default function HomePage() {
 
   const theme = {
     bg: isDarkMode ? 'bg-[#050505]' : 'bg-[#F9F9F9]',
-    // glassNav 已移除，移交由 Header 组件内部处理
     
     // --- 字体颜色 ---
     heroTitle: isDarkMode ? 'text-white drop-shadow-md' : 'text-black',
@@ -242,45 +241,39 @@ export default function HomePage() {
     columnText: isDarkMode ? 'text-gray-400' : 'text-gray-600',
     columnTitle: isDarkMode ? 'text-gray-100' : 'text-gray-900',
     
-    // 图标背景
-    iconBgRed: 'bg-[#C72C41]',
-    iconBgBlue: 'bg-[#2B4C7E]', 
-    iconBgPurple: 'bg-[#C72C41]',
-    iconColor: 'text-white',
+    // --- [修改] 图标背景 - 统一为单色调 ---
+    iconBgMono: isDarkMode ? 'bg-white/10' : 'bg-gray-100',
+    // --- [修改] 图标颜色 - 自适应 ---
+    iconColor: isDarkMode ? 'text-white' : 'text-gray-900',
 
-    // 标签条样式
-    tagRed: isDarkMode 
-      ? 'bg-[#C72C41]/20 text-red-200 hover:bg-[#C72C41]/30' 
-      : 'bg-[#C72C41]/10 text-red-800 hover:bg-[#C72C41]/20',
-    tagBlue: isDarkMode 
-      ? 'bg-[#2B4C7E]/30 text-blue-200 hover:bg-[#2B4C7E]/40' 
-      : 'bg-[#2B4C7E]/10 text-blue-800 hover:bg-[#2B4C7E]/20',
+    // --- [修改] 标签条样式 - 统一为单色调 ---
+    tagMono: isDarkMode 
+      ? 'bg-white/5 text-gray-300 hover:bg-white/10 border border-white/10' 
+      : 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-black/5',
   };
 
   return (
     <div className={`w-full min-h-screen transition-colors duration-700 ease-in-out ${theme.bg} font-sans selection:bg-purple-500/30 flex flex-col`}>
       
-      {/* HEADER - 现在通过组件引入 */}
+      {/* HEADER */}
       <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
-      {/* HERO SECTION */}
+      {/* HERO SECTION (保持不变) */}
       <section className="relative w-full min-h-screen flex flex-col justify-center p-6 md:p-12">
         {/* -mt-16 md:-mt-24 保持视觉重心上提 */}
         <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center justify-between gap-12 -mt-16 md:-mt-24">
           <div className="w-full md:w-5/12 flex flex-col space-y-8 z-10 text-left">
             <div>
               <h1 className={`text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-[1.1] transition-colors duration-500 ${theme.heroTitle}`}>
-                Plote Motion Field
+                Tianshan Zhang 
               </h1>
               <p className={`text-xl font-light mb-4 tracking-wide transition-colors duration-500 ${theme.heroSubtitle}`}>
-                Generative Motion Journal
+              B.S. Candidate
               </p>
               <p className={`text-sm md:text-base leading-relaxed max-w-md transition-colors duration-500 ${theme.heroBody}`}>
-                Reconstructing the academic homepage: circular trajectories, beam scanning, 
-                and discrete particles form a cyclical visual system.
+              Computer Science and Materials Science
                 <br /><br />
-                Retaining a sense of technology and futurism in a minimalist 
-                {isDarkMode ? ' dark particle ' : ' light orbital '} system.
+                A view of computer graphics, expressed through {isDarkMode ? 'physical simulation' : 'generative imaging'}.
               </p>
             </div>
             <div className="flex flex-wrap gap-4 pt-4">
@@ -291,18 +284,18 @@ export default function HomePage() {
                 View Papers
               </button>
             </div>
-             <div className={`grid grid-cols-3 gap-4 pt-8 border-t transition-colors duration-500 ${theme.statsBorder}`}>
-                <div>
-                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>LOOP</p>
-                  <p className={`text-lg font-bold ${theme.statsValue}`}>03</p>
-                </div>
-                <div>
-                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>MODE</p>
-                  <p className={`text-lg font-bold ${theme.statsValue}`}>{isDarkMode ? 'Monochrome' : 'Solar'}</p>
-                </div>
+              <div className={`grid grid-cols-3 gap-4 pt-8 border-t transition-colors duration-500 ${theme.statsBorder}`}>
                 <div>
                   <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>FIELD</p>
-                  <p className={`text-lg font-bold ${theme.statsValue}`}>Motion Graphic</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>CS & AI</p>
+                </div>
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>INTEREST</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>{isDarkMode ? '3D Vision' : 'GenAI'}</p>
+                </div>
+                <div>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${theme.statsLabel}`}>ROLE</p>
+                  <p className={`text-lg font-bold ${theme.statsValue}`}>Research Intern</p>
                 </div>
             </div>
           </div>
@@ -348,20 +341,35 @@ export default function HomePage() {
           </motion.h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-              {/* Research Interests */}
+              {/* Research Interests - [修改] 增加分行和列表结构 */}
               <div>
                   <h3 className={`text-3xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Research Interests</h3>
-                  <p className={`${theme.columnText} leading-relaxed text-justify text-lg`}>
-                    My research interests lie in the theoretical foundations of generative modeling and their application to creating structurally coherent and physically plausible content. I approach this from a mathematical perspective, specifically studying diffusion and autoregressive models through their connections to Markov processes, stochastic differential equations, and Boltzmann-type distributions. My initial focus is on applying these principles to enhance structure-aware image generation, ensuring synthesized images are not just visually convincing but also compositionally sound. Building upon this, I extend these concepts from 2D to 3D, aiming to develop generative systems that understand the physical world. I am particularly intrigued by creating physically-grounded 3D models that possess an intrinsic understanding of their own geometry and material properties, which I see as a crucial step towards realistically modeling Human-Object Interaction (HOI). By ensuring models are grounded in physical reality, we can better simulate how objects respond to interaction. This same principle extends to resolving key challenges in video generation, where ensuring long-term temporal consistency remains a significant hurdle. My ultimate ambition is to contribute to the development of World Models by creating generative systems that unify rigorous mathematical modeling with a deep, intuitive grasp of physical dynamics and creative intelligence.
-                  </p>
+                  <ul className={`${theme.columnText} leading-relaxed text-lg space-y-6`}>
+                    <li>
+                      <strong className={`block mb-2 ${theme.columnTitle} opacity-90`}>Theoretical Generative Modeling (Image & Video)</strong>
+                      My research is grounded in the theoretical foundations of generative modeling. I approach this from a mathematical perspective, specifically studying Diffusion and Autoregressive models through their connections to Markov processes, SDEs, and Boltzmann-type distributions.
+                    </li>
+                    <li>
+                      <strong className={`block mb-2 ${theme.columnTitle} opacity-90`}>Interactive & Navigable 3D Environments</strong>
+                      I am interested in the autonomous generation of navigable 3D scenes. My goal is to develop systems that can generate complex 3D environments where users or agents can freely move and interact, bridging the gap between static 3D assets and dynamic virtual spaces.
+                    </li>
+                  </ul>
               </div>
               
-              {/* Biography */}
+              {/* Biography - [修改] 增加分段 */}
               <div>
                   <h3 className={`text-3xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Biography</h3>
-                  <p className={`${theme.columnText} leading-relaxed text-justify text-lg`}>
-                  I am an undergraduate with a dual academic focus in Computer Science and a physics-intensive Materials Science program. My passion for physics lies in understanding complex systems by deriving their behavior from first principles. I particularly enjoy rigorously working through foundational derivations, from using statistical mechanics to derive the Maxwell-Boltzmann distribution and Planck’s law of black-body radiation, to exploring the fundamental postulates that lead to the Schrödinger equation in quantum mechanics. During my sophomore year, I delved into foundational computer science through hands-on systems projects. In compilers, I implemented a miniature front-end pipeline that transforms source code into an Abstract Syntax Tree (AST) and then into an intermediate representation, upon which I applied semantic analysis and basic optimizations. In operating systems, I extended the xv6 kernel through a series of experiments, engineering core functionalities such as copy-on-write fork to optimize memory usage, as well as sophisticated process schedulers and thread pool optimizations to ensure fair resource allocation under concurrent workloads. Over the past two years, my focus has converged on the intersection of machine learning, mathematical reasoning, and interactive 3D generation. I have explored the theoretical underpinnings of diffusion models by investigating concepts such as Schrödinger Bridges with my knowledge of mathematical statistics. More recently, my work has shifted towards application, where I am exploring 3D interactivity from a physics-based perspective. My current goal is to develop AI systems that can understand and interact with the world in a physically coherent manner.
-                  </p>
+                  <div className={`${theme.columnText} leading-relaxed text-lg space-y-6 text-justify`}>
+                    <p>
+                      I am an undergraduate with a dual focus in Computer Science and Materials Science. My passion lies in understanding complex systems from first principles—ranging from deriving the Maxwell-Boltzmann distribution and Schrödinger equation in statistical mechanics, to engineering core systems in computer science.
+                    </p>
+                    <p>
+                      My technical background is rooted in hands-on systems programming. I have implemented a compiler front-end (from source to AST/IR) and extended the xv6 operating system with advanced features like copy-on-write fork and priority-based scheduling.
+                    </p>
+                    <p>
+
+                    </p>
+                  </div>
               </div>
           </div>
           
@@ -369,17 +377,17 @@ export default function HomePage() {
           <div className="mt-16 pt-8 border-t border-white/10">
               <h3 className={`text-2xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Affiliations</h3>
               <div className="flex flex-wrap gap-4">
-                  <div className={`px-6 py-3 rounded-full bg-white/10 text-gray-400 border border-white/10 hover:bg-white/20 transition-colors cursor-default text-sm font-medium`}>
+                  <div className={`px-6 py-3 rounded-full bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 transition-colors cursor-default text-sm font-medium`}>
                     Peking University (Visiting)
                   </div>
-                  <div className={`px-6 py-3 rounded-full bg-white/10 text-gray-400 border border-white/10 hover:bg-white/20 transition-colors cursor-default text-sm font-medium`}>
+                  <div className={`px-6 py-3 rounded-full bg-white/5 text-gray-400 border border-white/10 hover:bg-white/10 transition-colors cursor-default text-sm font-medium`}>
                     Institute of Automation, CAS (Visiting)
                   </div>
               </div>
           </div>
         </motion.div>
 
-        {/* Columns */}
+        {/* Columns - [修改] 应用单色调主题 */}
         <div className={`px-4 md:px-10 lg:px-20 max-w-7xl mx-auto border-t pt-20 mb-10 ${isDarkMode ? 'border-white/10' : 'border-black/10'}`}>
             <motion.h2 
               className={`text-3xl md:text-4xl font-bold mb-16 text-center ${theme.columnTitle}`}
@@ -399,17 +407,19 @@ export default function HomePage() {
                   initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInVariants}
                 >
                     <div className="flex items-center mb-6">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgRed}`}>
+                        {/* [修改] 使用 iconBgMono 和 iconColor */}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-sm ${theme.iconBgMono}`}>
                             <FaFlask className={`w-4 h-4 ${theme.iconColor}`} />
                         </div>
                         <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>Notes</h3>
                     </div>
                     <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Research notes and methodological insights from my ongoing projects.</p>
                     <div className="space-y-3">
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                        {/* [修改] 使用 tagMono */}
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Cognitive Models
                         </a>
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Experimental Design
                         </a>
                     </div>
@@ -421,17 +431,19 @@ export default function HomePage() {
                   initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.1}} variants={fadeInVariants}
                 >
                     <div className="flex items-center mb-6">
-                         <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgBlue}`}>
+                          {/* [修改] 使用 iconBgMono 和 iconColor */}
+                         <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-sm ${theme.iconBgMono}`}>
                             <FaBook className={`w-4 h-4 ${theme.iconColor}`} />
                         </div>
                         <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>Papers</h3>
                     </div>
                     <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Critical reviews and summaries of influential papers in AI.</p>
                     <div className="space-y-3">
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                        {/* [修改] 使用 tagMono */}
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Recent Publications
                         </a>
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Classic Papers
                         </a>
                     </div>
@@ -443,17 +455,19 @@ export default function HomePage() {
                   initial="hidden" whileInView="visible" viewport={{ once: true, amount: 0.5 }} transition={{delay: 0.2}} variants={fadeInVariants}
                 >
                     <div className="flex items-center mb-6">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-md ${theme.iconBgPurple}`}>
+                        {/* [修改] 使用 iconBgMono 和 iconColor */}
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-4 shadow-sm ${theme.iconBgMono}`}>
                             <FaUser className={`w-4 h-4 ${theme.iconColor}`} />
                         </div>
                         <h3 className={`text-xl font-bold tracking-wide ${theme.columnTitle}`}>About Me</h3>
                     </div>
                     <p className={`${theme.columnText} mb-8 text-sm h-16 leading-relaxed`}>Personal reflections on academic life and philosophy.</p>
                     <div className="space-y-3">
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagRed}`}>
+                        {/* [修改] 使用 tagMono */}
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Academic Journey
                         </a>
-                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagBlue}`}>
+                        <a href="#" className={`block w-full py-2.5 px-4 rounded text-xs font-medium tracking-wide transition-all ${theme.tagMono}`}>
                            Teaching Philosophy
                         </a>
                     </div>
@@ -462,7 +476,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* FOOTER */}
+      {/* FOOTER (保持不变) */}
       <footer className="w-full py-10 px-4 md:px-10 lg:px-20 flex justify-center relative z-10">
         <div className={`w-full max-w-6xl rounded-3xl border p-8 md:p-10 transition-all duration-500 ${theme.newFooterContainer}`}>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
