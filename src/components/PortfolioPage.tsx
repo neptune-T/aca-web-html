@@ -64,7 +64,7 @@ const InteractionShaderMaterial = {
 };
 
 // 请确保 public 文件夹下有此模型
-const BUNNY_PLY_URL = '/models/bunny.ply';
+const BUNNY_PLY_URL = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/models/bunny.ply`;
 
 function InteractiveBunny({ url }: { url: string }) {
   const geometry = useLoader(PLYLoader, url) as THREE.BufferGeometry;

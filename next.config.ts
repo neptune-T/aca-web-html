@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   output: 'export',
   assetPrefix: isProd ? `/${repoName}/` : '',
   basePath: isProd ? `/${repoName}` : '',
+  trailingSlash: true,  // Add this to handle paths correctly
   env: {
     NEXT_PUBLIC_BASE_PATH: isProd ? `/${repoName}` : '',
   },

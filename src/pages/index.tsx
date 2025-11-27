@@ -15,7 +15,7 @@ import Header from '@/components/Header';
 // ==========================================
 // PART 1: 3D 兔子组件 (完整逻辑 - 保持不变)
 // ==========================================
-const BUNNY_PLY_URL = '/models/bunny.ply';
+const BUNNY_PLY_URL = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/models/bunny.ply`;
 
 function InteractiveBunny({ url }: { url: string }) {
   const geometry = useLoader(PLYLoader, url) as THREE.BufferGeometry;
