@@ -142,7 +142,7 @@ function Loading() {
   );
 }
 
-const BUNNY_PLY_URL = '/models/bunny.ply';
+const BUNNY_PLY_URL = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/models/bunny.ply`;
 
 export default function OptimizedScene() {
   const bgColor = '#101010';

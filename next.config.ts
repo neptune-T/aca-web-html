@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   output: 'export',
   assetPrefix: isProd ? `/${repoName}/` : '',
   basePath: isProd ? `/${repoName}` : '',
+  env: {
+    NEXT_PUBLIC_BASE_PATH: isProd ? `/${repoName}` : '',
+  },
   images: {
     unoptimized: true,
   },
