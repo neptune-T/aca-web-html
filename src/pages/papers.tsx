@@ -6,11 +6,28 @@ import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Calendar, MapPin, Users, FileText, Github, Globe } from 'lucide-react';
 
-// --- 数据获取 (修复点在这里) ---
+// --- 类型定义 (移到顶部是更好的实践) ---
+type Paper = {
+  id: string;
+  title: string;
+  date: string;
+  image?: string;
+  summary: string;
+  authors: string;
+  venue: string;
+  url?: string;
+  arxiv_url?: string;
+  github_url?: string;
+  huggingface_url?: string;
+};
+
+// --- 数据获取 ---
 export async function getStaticProps() {
   const rawData = getSortedPapersData();
   
-  // 🔴 关键修复：遍历数据，强制把 date 转成字符串
+  // 🟢 修复：添加 eslint-disable 注释来允许这里使用 any
+  // 因为 md gray-matter 解析出的原始数据类型确实很难定义，使用 any 是合理的妥协
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const allPapersData = rawData.map((paper: any) => ({
     ...paper,
     // 如果是 Date 对象就转 ISO 字符串，如果是字符串就保持原样
@@ -23,21 +40,6 @@ export async function getStaticProps() {
     },
   };
 }
-
-// 定义 Paper 类型接口
-type Paper = {
-  id: string;
-  title: string;
-  date: string;
-  image?: string;
-  summary: string;
-  authors: string;
-  venue: string;
-  url?: string;          
-  arxiv_url?: string;    
-  github_url?: string;   
-  huggingface_url?: string;
-};
 
 export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
   const [isDarkMode, setIsDarkMode] = useState(true);
@@ -193,8 +195,6 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
           )}
 
         </main>
-
-
       </div>
     </>
   );
