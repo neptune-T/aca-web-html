@@ -22,6 +22,7 @@ type Note = {
   date: string;
   summary: string;
   tags?: string[];
+  coverImage?: string;
 };
 
 export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
@@ -134,7 +135,7 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
 
           {/* 笔记卡片网格 */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNotes.map(({ id, date, title, summary, tags }, index) => (
+            {filteredNotes.map(({ id, date, title, summary, tags, coverImage }, index) => (
               <motion.div
                 key={id}
                 layoutId={id}
@@ -145,6 +146,14 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
                 <Link href={`/notes/${id}`} legacyBehavior>
                   <a className={`group block h-full rounded-3xl p-8 transition-all duration-300 flex flex-col justify-between ${theme.card}`}>
                     
+                    {coverImage && (
+                      <img 
+                        src={coverImage} 
+                        alt={title}
+                        className="w-full h-40 object-cover rounded-lg mb-6"
+                      />
+                    )}
+
                     <div>
                       {/* 日期 */}
                       <div className={`flex items-center gap-2 text-xs font-mono mb-6 uppercase tracking-wider ${theme.metaColor}`}>

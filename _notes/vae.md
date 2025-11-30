@@ -5,6 +5,8 @@ summary: 'Analyzed the difficulty in deep latent variable models where the margi
 tags: ['generative model']
 ---
 
+![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/vae/G0KzGbIbYAATcix.jpg)
+
 # Introduction
 
 

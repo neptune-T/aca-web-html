@@ -25,6 +25,11 @@ export function getSortedNotesData() {
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const matterResult = matter(fileContents);
 
+      // Extract first image from content
+      const imageRegex = /!\[.*?\]\((.*?)\)/;
+      const match = imageRegex.exec(matterResult.content);
+      const coverImage = match ? match[1] : '';
+
       if (!matterResult.data.title || !matterResult.data.date || !matterResult.data.summary) {
         console.warn(`Note with id '${id}' is missing required frontmatter and will be skipped.`);
         return null;
@@ -32,17 +37,21 @@ export function getSortedNotesData() {
 
       return {
         id,
+        coverImage,
         ...(matterResult.data as { title: string; date: string; summary: string; tags?: string[] }),
       };
     })
-    .filter((note): note is { id: string; title: string; date: string; summary: string; tags?: string[] } => note !== null);
+    .filter((note): note is { id: string; coverImage: string; title: string; date: string; summary: string; tags?: string[] } => note !== null);
 
   return allNotesData.sort((a, b) => {
-    if (a.date < b.date) {
-      return 1;
-    } else {
-      return -1;
+    if (a && b) {
+      if (a.date < b.date) {
+        return 1;
+      } else {
+        return -1;
+      }
     }
+    return 0;
   });
 }
 
@@ -76,9 +85,15 @@ export async function getNoteData(id: string) {
     .process(matterResult.content);
   const contentHtml = processedContent.toString();
 
+  // Extract first image from content
+  const imageRegex = /!\[.*?\]\((.*?)\)/;
+  const match = imageRegex.exec(matterResult.content);
+  const coverImage = match ? match[1] : '';
+
   return {
     id,
     contentHtml,
+    coverImage,
     ...(matterResult.data as { title: string; date: string; summary: string; tags?: string[] }),
   };
 } 

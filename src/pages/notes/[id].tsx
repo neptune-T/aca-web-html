@@ -34,6 +34,7 @@ type NoteData = {
   title: string;
   date: string;
   contentHtml: string;
+  coverImage?: string;
 };
 
 export default function Note({ noteData }: { noteData: NoteData }) {
@@ -67,6 +68,13 @@ export default function Note({ noteData }: { noteData: NoteData }) {
                             prose-a:text-klein-blue hover:prose-a:text-opacity-80
                             prose-strong:text-gray-100
                             prose-code:text-old-red prose-code:bg-gray-500/20 prose-code:rounded-md prose-code:px-1.5 prose-code:py-1">
+              {noteData.coverImage && (
+                <img 
+                  src={noteData.coverImage} 
+                  alt="Cover" 
+                  className="w-full h-64 object-cover rounded-lg mb-8" 
+                />
+              )}
               <h1>{noteData.title}</h1>
               <p className="text-gray-400 text-base -mt-4 mb-8">{noteData.date}</p>
               <div dangerouslySetInnerHTML={{ __html: noteData.contentHtml }} />
