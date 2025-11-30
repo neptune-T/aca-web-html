@@ -2,7 +2,6 @@
 
 This is a personal academic homepage built with Next.js. It showcases academic background, research interests, and includes a note-taking system that supports Markdown and KaTeX for mathematical formulas.
 
-![Homepage Screenshot](public/img/1.jpg)
 
 ## ✨ Key Features
 

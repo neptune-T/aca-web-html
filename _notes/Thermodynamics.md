@@ -5,6 +5,8 @@ summary: 'Statistical mechanics is built upon the postulate of equal probability
 tags: ['热力学和统计力学', '物理']
 ---
 
+![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/Theory/thermodynamics.png)
+
 `一个笨人能理解的东西，其他人也能理解。 —— Richard Phillips Feynman`
 
 为了研究一个物体或者说系统的性质，首先必须明确它所处的状态。一般的热统书里，热力学部分常讨论的是平衡态，指的是在没有外界影响的条件下，物体的各部分的宏观性质（温度T、体积V等等）在长时间内不发生任何变化。

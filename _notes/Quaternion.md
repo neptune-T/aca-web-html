@@ -2,8 +2,10 @@
 title: 'Quaternions and 3D rotations '
 date: '2025-10'
 summary: '111'
-tags: ['计算机图形学']
+tags: ['Computer Graphics']
 ---
+
+![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/ComputerGraphics/Quaternions.png)
 
 # 三维旋转表示的困境
 

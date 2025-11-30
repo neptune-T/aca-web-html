@@ -2,7 +2,7 @@
 title: '3D Gaussian Splatting'
 date: '2025-09'
 summary: 'Represents a 3D scene as an explicit set of anisotropic 3D Gaussians, each defined by parameters for position, covariance, opacity, and view-dependent color via Spherical Harmonics. Optimizes all parameters from images using stochastic gradient descent, coupled with an adaptive density control mechanism that dynamically clones, splits, and prunes the Gaussians to create a detailed and efficient scene representation.'
-tags: ['计算机图形学']
+tags: ['Computer Graphics']
 ---
 
 ![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/3dgs/1.png)
