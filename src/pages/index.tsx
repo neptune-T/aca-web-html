@@ -11,6 +11,7 @@ import { FaBook, FaFlask, FaUser, FaGithub, FaLinkedin, FaTwitter } from 'react-
 
 // 引入拆分出去的 Header 组件
 import Header from '@/components/Header';
+import Head from 'next/head';
 
 // ==========================================
 // PART 1: 3D 兔子组件 (完整逻辑 - 保持不变)
@@ -255,6 +256,11 @@ export default function HomePage() {
   return (
     <div className={`w-full min-h-screen transition-colors duration-700 ease-in-out ${theme.bg} font-sans selection:bg-purple-500/30 flex flex-col`}>
       
+      <Head>
+        <title>Tianshan Zhang | 张天山</title>
+        <meta name="description" content="Personal academic homepage of Tianshan Zhang." />
+      </Head>
+
       {/* HEADER */}
       <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
 
