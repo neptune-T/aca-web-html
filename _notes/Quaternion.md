@@ -1,7 +1,7 @@
 ---
 title: 'Quaternions and 3D rotations '
 date: '2025-10'
-summary: '111'
+summary: 'By using a unit quaternion constructed with half-angles in conjunction with the conjugate transformation operator, it is not only geometrically equivalent to the Rodrigues rotation formula, but also enables stable, efficient and distance-preserving spatial attitude control.'
 tags: ['Computer Graphics']
 ---
 

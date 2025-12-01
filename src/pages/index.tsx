@@ -258,7 +258,7 @@ export default function HomePage() {
       
       <Head>
         <title>Tianshan Zhang | 张天山</title>
-        <meta name="description" content="Personal academic homepage of Tianshan Zhang." />
+        <meta name="description" content="Personal academic homepage" />
       </Head>
 
       {/* HEADER */}
