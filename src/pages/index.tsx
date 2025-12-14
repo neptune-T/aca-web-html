@@ -379,7 +379,7 @@ export default function HomePage() {
               </div>
           </div>
           
-          {/* Affiliations */}
+          {/* Affiliations
           <div className="mt-16 pt-8 border-t border-white/10">
               <h3 className={`text-2xl font-bold mb-8 opacity-90 ${theme.columnTitle}`}>Affiliations</h3>
               <div className="flex flex-wrap gap-4">
@@ -390,7 +390,7 @@ export default function HomePage() {
                     Institute of Automation, CAS (Visiting)
                   </div>
               </div>
-          </div>
+          </div> */}
         </motion.div>
 
         {/* Columns - [修改] 应用单色调主题 */}
