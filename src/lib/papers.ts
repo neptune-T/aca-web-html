@@ -8,7 +8,8 @@ const papersDirectory = path.join(process.cwd(), '_papers');
 interface Paper {
   id: string;
   title: string;
-  image: string;
+  image?: string;
+  video?: string;
   summary: string;
   authors: string;
   venue: string;

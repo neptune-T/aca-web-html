@@ -4,7 +4,8 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
-import { Calendar, MapPin, Users, FileText, Github, Globe } from 'lucide-react';
+import { Calendar, MapPin, Users, FileText, Github, Globe, Link as LinkIcon } from 'lucide-react';
+import { withBasePath } from '@/lib/basePath';
 
 // --- 类型定义 (移到顶部是更好的实践) ---
 type Paper = {
@@ -12,6 +13,7 @@ type Paper = {
   title: string;
   date: string;
   image?: string;
+  video?: string;
   summary: string;
   authors: string;
   venue: string;
@@ -44,6 +46,30 @@ export async function getStaticProps() {
 export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
   const [isDarkMode, setIsDarkMode] = useState(true);
 
+  const MY_NAME = 'Tianshan Zhang';
+  const renderAuthors = (authors: string) => {
+    if (!authors || !authors.includes(MY_NAME)) return <span className="italic">{authors}</span>;
+    const parts = authors.split(MY_NAME);
+    return (
+      <span className="italic">
+        {parts.map((part, idx) => (
+          <span key={idx}>
+            {part}
+            {idx < parts.length - 1 && (
+              <span
+                className={`not-italic font-extrabold ${
+                  isDarkMode ? 'text-white drop-shadow-sm' : 'text-black'
+                }`}
+              >
+                {MY_NAME}
+              </span>
+            )}
+          </span>
+        ))}
+      </span>
+    );
+  };
+
   // 强制同步 Body 背景
   useEffect(() => {
     const bg = isDarkMode ? '#050505' : '#F9F9F9';
@@ -70,6 +96,26 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
       : 'bg-black/5 hover:bg-black/10 text-black border border-black/5',
       
     divider: isDarkMode ? 'border-white/10' : 'border-black/10',
+  };
+
+  const linkBtnByType = (type: 'paper' | 'code' | 'website' | 'huggingface') => {
+    if (type === 'huggingface') {
+      return isDarkMode
+        ? 'bg-yellow-400/15 hover:bg-yellow-400/25 text-yellow-200 border border-yellow-400/30'
+        : 'bg-yellow-50 hover:bg-yellow-100 text-yellow-700 border border-yellow-200';
+    }
+    if (type === 'paper') {
+      return isDarkMode
+        ? 'bg-[#B31B1B]/15 hover:bg-[#B31B1B]/25 text-[#ffb4b4] border border-[#B31B1B]/35'
+        : 'bg-red-50 hover:bg-red-100 text-red-700 border border-red-200';
+    }
+    if (type === 'website') {
+      return isDarkMode
+        ? 'bg-blue-400/15 hover:bg-blue-400/25 text-blue-200 border border-blue-400/30'
+        : 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200';
+    }
+    // code
+    return theme.linkBtn;
   };
 
   return (
@@ -116,16 +162,29 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                 className={`group rounded-3xl flex flex-col transition-all duration-300 ${theme.card}`}
               >
                 
-                {/* 1. 封面图区域 (如果有图片) */}
-                {paper.image && (
+                {/* 1. 封面区域（优先视频，其次图片） */}
+                {(paper.video || paper.image) && (
                   <div className="relative w-full h-64 overflow-hidden border-b border-opacity-10 border-gray-500">
-                    <Image 
-                      src={paper.image} 
-                      alt={paper.title}
-                      fill
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
+                    {paper.video ? (
+                      <video
+                        className="w-full h-full object-cover"
+                        src={withBasePath(paper.video)}
+                        poster={paper.image ? withBasePath(paper.image) : undefined}
+                        muted
+                        loop
+                        playsInline
+                        autoPlay
+                        preload="metadata"
+                      />
+                    ) : (
+                      <Image
+                        src={withBasePath(paper.image!)}
+                        alt={paper.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      />
+                    )}
                     <div className="absolute top-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-black/50 backdrop-blur-md text-white border border-white/10 z-10">
                       {paper.venue}
                     </div>
@@ -151,7 +210,7 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                   {/* Authors */}
                   <div className={`flex items-start gap-2 text-sm mb-5 ${theme.metaColor}`}>
                     <Users size={14} className="mt-1 flex-shrink-0" />
-                    <span className="italic">{paper.authors}</span>
+                    {renderAuthors(paper.authors)}
                   </div>
 
                   {/* Summary */}
@@ -167,18 +226,28 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
                     </div>
 
                     {paper.arxiv_url && (
-                      <a href={paper.arxiv_url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${theme.linkBtn}`}>
-                        <FileText size={14} /> Paper
+                      <a
+                        href={paper.arxiv_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${linkBtnByType('paper')}`}
+                      >
+                        <FileText size={14} /> arXiv
                       </a>
                     )}
                     {paper.github_url && (
-                      <a href={paper.github_url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${theme.linkBtn}`}>
+                      <a href={paper.github_url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${linkBtnByType('code')}`}>
                         <Github size={14} /> Code
                       </a>
                     )}
                     {paper.url && (
-                      <a href={paper.url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${theme.linkBtn}`}>
+                      <a href={paper.url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${linkBtnByType('website')}`}>
                         <Globe size={14} /> Website
+                      </a>
+                    )}
+                    {paper.huggingface_url && (
+                      <a href={paper.huggingface_url} target="_blank" rel="noreferrer" className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all ${linkBtnByType('huggingface')}`}>
+                        <LinkIcon size={14} /> HuggingFace
                       </a>
                     )}
                   </div>

@@ -5,6 +5,8 @@ import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Header from '@/components/Header';
 import { Calendar, ArrowRight } from 'lucide-react';
+import { withBasePath } from '@/lib/basePath';
+import Image from 'next/image';
 
 // --- 数据获取 (保持不变) ---
 export async function getStaticProps() {
@@ -147,11 +149,16 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
                   <a className={`group block h-full rounded-3xl p-8 transition-all duration-300 flex flex-col justify-between ${theme.card}`}>
                     
                     {coverImage && (
-                      <img 
-                        src={coverImage} 
-                        alt={title}
-                        className="w-full h-40 object-cover rounded-lg mb-6"
-                      />
+                      <div className="relative w-full h-40 rounded-lg mb-6 overflow-hidden">
+                        <Image
+                          src={withBasePath(coverImage)}
+                          alt={title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, 33vw"
+                          unoptimized
+                        />
+                      </div>
                     )}
 
                     <div>

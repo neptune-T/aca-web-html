@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'; // [修改1] 删除了 useMemo
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
-import * as echarts from 'echarts';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import { Trophy, Globe, Award, MapPin } from 'lucide-react';
 import { getTravelData } from '@/lib/travel';
 import { getHonorsData } from '@/lib/honors';
+import { withBasePath } from '@/lib/basePath';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -50,8 +50,11 @@ export default function About({ travelData, honorsData }: AboutProps) {
   useEffect(() => {
     const loadMapData = async () => {
       try {
-        const worldRes = await fetch('/world.json');
-        const chinaRes = await fetch('/china.json');
+        const [echarts, worldRes, chinaRes] = await Promise.all([
+          import('echarts'),
+          fetch(withBasePath('/world.json')),
+          fetch(withBasePath('/china.json')),
+        ]);
         if (!worldRes.ok || !chinaRes.ok) return;
         const worldJson = await worldRes.json();
         const chinaJson = await chinaRes.json();
@@ -91,17 +94,45 @@ export default function About({ travelData, honorsData }: AboutProps) {
     if (!mapLoaded) return {};
 
     const detailsData = travelData.details[mapScope === 'world' ? 'world' : 'china'];
-    const visitedList = Object.keys(detailsData);
+    const visitedListRaw = Object.keys(detailsData);
+
+    // world.json 使用中文国家名，这里做一个英文->中文的别名映射，保证“去过的地方”能正确命中区域
+    const WORLD_NAME_ALIASES: Record<string, string[]> = {
+      China: ['中国'],
+      Japan: ['日本'],
+      'United States': ['美国'],
+      Australia: ['澳大利亚'],
+      'United Kingdom': ['英国'],
+    };
+
+    const visitedItems =
+      mapScope === 'world'
+        ? visitedListRaw.flatMap((originalName) => {
+            const aliases = WORLD_NAME_ALIASES[originalName] ?? [originalName];
+            return aliases.map((name) => ({ name, originalName }));
+          })
+        : visitedListRaw.map((name) => ({ name, originalName: name }));
     
-    const data = visitedList.map(name => ({
-      name: name,
-      value: detailsData[name].visits,
-      details: detailsData[name].description,
+    const data = visitedItems.map(({ name, originalName }) => ({
+      name,
+      originalName,
+      value: detailsData[originalName].visits,
+      details: detailsData[originalName].description,
       itemStyle: {
         areaColor: theme.mapHighlight,
         shadowBlur: 15,
         shadowColor: theme.mapHighlightShadow
       }
+    }));
+
+    // 让去过的地方“常亮”：即使鼠标移走/缩放拖拽也保持高亮样式
+    const regions = visitedItems.map(({ name }) => ({
+      name,
+      itemStyle: {
+        areaColor: theme.mapHighlight,
+        shadowBlur: 15,
+        shadowColor: theme.mapHighlightShadow,
+      },
     }));
 
     return {
@@ -116,7 +147,7 @@ export default function About({ travelData, honorsData }: AboutProps) {
           if (!params.data) return params.name;
           const info = params.data;
           return `
-            <div style="font-weight:bold; margin-bottom:4px;">${params.name}</div>
+            <div style="font-weight:bold; margin-bottom:4px;">${info.originalName || params.name}</div>
             <div style="font-size:12px; opacity:0.8;">Visits: ${info.value}</div>
             ${info.details ? `<div style="font-size:12px; opacity:0.8; margin-top:2px;">${info.details}</div>` : ''}
           `;
@@ -125,6 +156,8 @@ export default function About({ travelData, honorsData }: AboutProps) {
       geo: {
         map: mapScope,
         roam: true,
+        selectedMode: false,
+        regions,
         
         center: mapScope === 'world' 
           ? [150, 25]  
@@ -151,6 +184,7 @@ export default function About({ travelData, honorsData }: AboutProps) {
         {
           type: 'map',
           geoIndex: 0,
+          selectedMode: false,
           data: data,
         }
       ]

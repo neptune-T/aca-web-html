@@ -8,9 +8,6 @@ import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
 import { Sun, Moon, ArrowRight } from 'lucide-react'; // 需安装图标库: npm install lucide-react
 import Link from 'next/link';
 
-// ==========================================
-// PART 1: 黑夜模式 - 你的粒子兔子 (代码保持不变)
-// ==========================================
 
 const InteractionShaderMaterial = {
   uniforms: {
@@ -128,10 +125,6 @@ function InteractiveBunny({ url }: { url: string }) {
   );
 }
 
-// ==========================================
-// PART 2: 白天模式 - 仿 Outer Wilds 星系系统
-// ==========================================
-
 // 单个轨道和行星组件
 const PlanetOrbit = ({ radius, speed, color, size, offset = 0 }: { radius: number, speed: number, color: string, size: number, offset?: number }) => {
   const groupRef = useRef<THREE.Group>(null);
@@ -189,9 +182,7 @@ function SolarSystem() {
   );
 }
 
-// ==========================================
-// PART 3: 主页面布局与逻辑
-// ==========================================
+
 
 function Loading() {
   return (

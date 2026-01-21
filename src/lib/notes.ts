@@ -7,6 +7,7 @@ import remarkMath from 'remark-math';
 import remarkRehype from 'remark-rehype';
 import rehypeKatex from 'rehype-katex';
 import rehypeStringify from 'rehype-stringify';
+import { withBasePath } from '@/lib/basePath';
 
 const notesDirectory = path.join(process.cwd(), '_notes');
 
@@ -28,7 +29,7 @@ export function getSortedNotesData() {
       // Extract first image from content
       const imageRegex = /!\[.*?\]\((.*?)\)/;
       const match = imageRegex.exec(matterResult.content);
-      const coverImage = match ? match[1] : '';
+      const coverImage = match ? withBasePath(match[1]) : '';
 
       if (!matterResult.data.title || !matterResult.data.date || !matterResult.data.summary) {
         console.warn(`Note with id '${id}' is missing required frontmatter and will be skipped.`);
@@ -83,12 +84,18 @@ export async function getNoteData(id: string) {
     .use(rehypeKatex)
     .use(rehypeStringify)
     .process(matterResult.content);
-  const contentHtml = processedContent.toString();
+  let contentHtml = processedContent.toString();
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (basePath) {
+    // 让 markdown 里写的 /img/... /notes/... 在 basePath 部署下也能正常工作
+    contentHtml = contentHtml
+      .replace(/(src|href)="\/(?!\/)/g, `$1="${basePath}/`);
+  }
 
   // Extract first image from content
   const imageRegex = /!\[.*?\]\((.*?)\)/;
   const match = imageRegex.exec(matterResult.content);
-  const coverImage = match ? match[1] : '';
+  const coverImage = match ? withBasePath(match[1]) : '';
 
   return {
     id,
