@@ -2,10 +2,10 @@ import { getSortedPapersData } from '@/lib/papers';
 import Head from 'next/head';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import { Calendar, MapPin, Users, FileText, Github, Globe, Link as LinkIcon } from 'lucide-react';
 import { withBasePath } from '@/lib/basePath';
+import { useTheme } from '@/context/ThemeContext';
 
 // --- 类型定义 (移到顶部是更好的实践) ---
 type Paper = {
@@ -44,7 +44,7 @@ export async function getStaticProps() {
 }
 
 export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
 
   const MY_NAME = 'Tianshan Zhang';
   const renderAuthors = (authors: string) => {
@@ -69,13 +69,6 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
       </span>
     );
   };
-
-  // 强制同步 Body 背景
-  useEffect(() => {
-    const bg = isDarkMode ? '#050505' : '#F9F9F9';
-    document.body.style.backgroundColor = bg;
-    document.documentElement.style.backgroundColor = bg;
-  }, [isDarkMode]);
 
   // --- 样式主题 ---
   const theme = {
@@ -127,7 +120,7 @@ export default function Papers({ allPapersData }: { allPapersData: Paper[] }) {
 
       <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-purple-500/30 flex flex-col ${theme.wrapper}`}>
         
-        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Header />
 
         <main className="flex-grow pt-32 md:pt-40 px-4 md:px-10 lg:px-20 pb-20 max-w-7xl mx-auto w-full">
           

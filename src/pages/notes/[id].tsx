@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { ParsedUrlQuery } from 'querystring';
 import { FiArrowLeft } from 'react-icons/fi';
 import { motion } from 'framer-motion';
-import { useState } from 'react';
 import Header from '@/components/Header';
+import { useTheme } from '@/context/ThemeContext';
 
 interface IParams extends ParsedUrlQuery {
   id: string;
@@ -38,7 +38,7 @@ type NoteData = {
 };
 
 export default function Note({ noteData }: { noteData: NoteData }) {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
 
   return (
     <>
@@ -46,7 +46,7 @@ export default function Note({ noteData }: { noteData: NoteData }) {
         <title>{noteData.title} | Plote</title>
       </Head>
       <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-purple-500/30 flex flex-col ${isDarkMode ? 'bg-[#050505] text-white' : 'bg-[#F9F9F9] text-[#1a1a1a]'}`}>
-        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Header />
 
         <motion.div 
           className="flex-grow pt-32 md:pt-40 px-4 md:px-10 lg:px-20 pb-20 max-w-7xl mx-auto w-full"

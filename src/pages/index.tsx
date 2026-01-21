@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { motion, Variants } from 'framer-motion';
 import { FaBook, FaFlask, FaUser, FaGithub, FaLinkedin, FaTwitter } from 'react-icons/fa';
@@ -8,6 +8,7 @@ import Header from '@/components/Header';
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
+import { useTheme } from '@/context/ThemeContext';
 
 const HomeHeroScene = dynamic(() => import('@/components/HomeHeroScene'), {
   ssr: false,
@@ -19,13 +20,13 @@ const HomeHeroScene = dynamic(() => import('@/components/HomeHeroScene'), {
 });
 
 export default function HomePage() {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
+    // body 背景由 ThemeProvider 统一同步；这里只保留历史兼容的 margin/padding 兜底
     document.body.style.margin = '0';
     document.body.style.padding = '0';
-    document.body.style.backgroundColor = isDarkMode ? '#050505' : '#F9F9F9';
-  }, [isDarkMode]);
+  }, []);
 
   const fadeInVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
@@ -94,7 +95,7 @@ export default function HomePage() {
       </Head>
 
       {/* HEADER */}
-      <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+      <Header />
 
       {/* HERO SECTION (保持不变) */}
       <section className="relative w-full min-h-screen flex flex-col justify-center p-6 md:p-12">

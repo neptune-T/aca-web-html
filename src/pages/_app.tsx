@@ -3,6 +3,7 @@ import 'katex/dist/katex.min.css';
 import type { AppProps } from 'next/app'
 import Head from 'next/head';
 import { withBasePath } from '@/lib/basePath';
+import { ThemeProvider } from '@/context/ThemeContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -14,7 +15,9 @@ function MyApp({ Component, pageProps }: AppProps) {
         <meta name="twitter:card" content="summary_large_image" />
         <meta property="og:image" content={withBasePath('/favicon.ico')} />
       </Head>
-      <Component {...pageProps} />
+      <ThemeProvider>
+        <Component {...pageProps} />
+      </ThemeProvider>
     </>
   )
 }

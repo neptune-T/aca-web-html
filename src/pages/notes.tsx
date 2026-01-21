@@ -1,12 +1,13 @@
 import { getSortedNotesData } from '@/lib/notes';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
 import Header from '@/components/Header';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { withBasePath } from '@/lib/basePath';
 import Image from 'next/image';
+import { useTheme } from '@/context/ThemeContext';
 
 // --- 数据获取 (保持不变) ---
 export async function getStaticProps() {
@@ -28,15 +29,8 @@ type Note = {
 };
 
 export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
   const [selectedTag, setSelectedTag] = useState<string>('all');
-
-  // 强制同步 Body 背景，防止边缘闪白
-  useEffect(() => {
-    const bg = isDarkMode ? '#050505' : '#F9F9F9';
-    document.body.style.backgroundColor = bg;
-    document.documentElement.style.backgroundColor = bg;
-  }, [isDarkMode]);
 
   const uniqueTags = ['all', ...new Set(allNotesData.flatMap(note => note.tags || []))];
   const filteredNotes = selectedTag === 'all' 
@@ -91,7 +85,7 @@ export default function Notes({ allNotesData }: { allNotesData: Note[] }) {
 
       <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-purple-500/30 flex flex-col ${theme.wrapper}`}>
         
-        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Header />
 
         <main className="flex-grow pt-32 md:pt-40 px-4 md:px-10 lg:px-20 pb-20 max-w-7xl mx-auto w-full">
           

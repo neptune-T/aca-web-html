@@ -7,6 +7,7 @@ import { Trophy, Globe, Award, MapPin } from 'lucide-react';
 import { getTravelData } from '@/lib/travel';
 import { getHonorsData } from '@/lib/honors';
 import { withBasePath } from '@/lib/basePath';
+import { useTheme } from '@/context/ThemeContext';
 
 const ReactECharts = dynamic(() => import('echarts-for-react'), { ssr: false });
 
@@ -37,15 +38,9 @@ export async function getStaticProps() {
 }
 
 export default function About({ travelData, honorsData }: AboutProps) {
-  const [isDarkMode, setIsDarkMode] = useState(true);
+  const { isDarkMode } = useTheme();
   const [mapScope, setMapScope] = useState<'world' | 'china'>('world');
   const [mapLoaded, setMapLoaded] = useState(false);
-
-  useEffect(() => {
-    const bg = isDarkMode ? '#050505' : '#F9F9F9';
-    document.body.style.backgroundColor = bg;
-    document.documentElement.style.backgroundColor = bg;
-  }, [isDarkMode]);
 
   useEffect(() => {
     const loadMapData = async () => {
@@ -200,7 +195,7 @@ export default function About({ travelData, honorsData }: AboutProps) {
       </Head>
 
       <div className={`min-h-screen transition-colors duration-500 font-sans selection:bg-purple-500/30 flex flex-col ${theme.wrapper}`}>
-        <Header isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} />
+        <Header />
 
         <main className="flex-grow pt-32 md:pt-40 px-4 md:px-10 lg:px-20 pb-20 max-w-7xl mx-auto w-full">
           
