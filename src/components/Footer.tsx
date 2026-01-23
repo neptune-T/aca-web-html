@@ -28,7 +28,7 @@ const Footer = () => {
         </div>
         <div className={`w-full h-px my-8 ${footerDivider}`}></div>
         <div className="text-center text-sm opacity-60">
-          <p>© 2025 Plote. All rights reserved.</p>
+          <p>© 2025 Plote · “We can only see a short distance ahead, but we can see plenty there that needs to be done.” — Alan Turing</p>
         </div>
       </div>
     </footer>
