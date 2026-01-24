@@ -2,7 +2,7 @@
 title: 'An Introduction to Variational Autoencoders'
 date: '2024-08'
 summary: 'Analyzed the difficulty in deep latent variable models where the marginal likelihood is intractable and cannot be directly optimized, and introduced the framework of variational inference, where an encoder is used to approximate the true posterior distribution, thereby transforming the problem into the optimization of the Evidence Lower Bound (ELBO). Applied the reparameterization trick to enable gradient-based optimization of the ELBO by making the sampling process differentiable, and ultimately achieved end-to-end training of the entire generative model, including both the encoder and the decoder.'
-tags: ['generative model']
+tags: ['generative model','Probability Bounds']
 ---
 
 ![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/vae/G0KzGbIbYAATcix.jpg)

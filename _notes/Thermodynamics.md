@@ -2,7 +2,7 @@
 title: '第一性原理分析热力学和统计力学'
 date: '2025-05'
 summary: 'Statistical mechanics is built upon the postulate of equal probability, which bridges deterministic microscopic mechanics and macroscopic thermodynamics. This foundation allows for the derivation of entropy and temperature, ultimately unifying classical and quantum descriptions through ensemble theory. '
-tags: ['Physics']
+tags: ['Physics','Thermodynamics','Statistical mechanics']
 ---
 
 ![](https://raw.githubusercontent.com/neptune-t/aca-web-html/main/public/img/Theory/thermodynamics.png)
