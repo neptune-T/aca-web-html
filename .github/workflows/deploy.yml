@@ -40,6 +40,13 @@ jobs:
 
       - name: Disable Jekyll (allow _next/)
         run: touch ./out/.nojekyll
+
+      - name: Verify export output (must include _next/)
+        run: |
+          echo "== out/.nojekyll ==" && ls -la ./out/.nojekyll
+          echo "== out root (top 50) ==" && ls -la ./out | head -n 50
+          echo "== out/_next/static (top) ==" && ls -la ./out/_next/static | head -n 50
+          echo "== out/_next/static/css (top) ==" && ls -la ./out/_next/static/css | head -n 50
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
