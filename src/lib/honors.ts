@@ -9,7 +9,7 @@ export function getHonorsData() {
     console.warn("'honors.json' not found. Returning empty array.");
     return [];
   }
-
+  
   const fileContents = fs.readFileSync(honorsFilePath, 'utf8');
   return JSON.parse(fileContents);
 }
