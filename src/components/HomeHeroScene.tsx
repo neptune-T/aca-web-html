@@ -5,8 +5,9 @@ import { Canvas, useFrame, useLoader, ThreeEvent } from '@react-three/fiber';
 import { OrbitControls, Center, Html, Line } from '@react-three/drei';
 import * as THREE from 'three';
 import { PLYLoader } from 'three/examples/jsm/loaders/PLYLoader.js';
+import { withBasePath } from '@/lib/basePath';
 
-const BUNNY_PLY_URL = `${process.env.NEXT_PUBLIC_BASE_PATH || ''}/models/bunny.ply`;
+const BUNNY_PLY_URL = withBasePath('/models/bunny.ply');
 
 function InteractiveBunny({ url }: { url: string }) {
   const geometry = useLoader(PLYLoader, url) as THREE.BufferGeometry;
@@ -184,9 +185,10 @@ function LoadingBunny() {
 export default function HomeHeroScene({ isDarkMode }: { isDarkMode: boolean }) {
   return (
     <Canvas
+      style={{ width: '100%', height: '100%' }}
       camera={{ position: [0, 0, 3], fov: 40 }}
       dpr={[1, 2]}
-      gl={{ powerPreference: 'high-performance', alpha: true }}
+      gl={{ powerPreference: 'high-performance' }}
     >
       <color attach="background" args={[isDarkMode ? '#101010' : '#ffffff']} />
       <OrbitControls enableZoom={false} enablePan={false} minDistance={2} maxDistance={5} rotateSpeed={0.5} />
