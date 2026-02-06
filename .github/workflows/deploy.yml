@@ -26,6 +26,12 @@ jobs:
         with:
           node-version: "20"
           cache: 'npm'
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+        with:
+          # 让 GitHub Pages 以 Next.js 静态站点方式处理（含禁用 Jekyll 等默认行为）
+          static_site_generator: next
           
       - name: Install dependencies
         run: npm install --legacy-peer-deps
