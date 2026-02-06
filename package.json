@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "postbuild": "node -e \"require('fs').closeSync(require('fs').openSync('out/.nojekyll','a'))\"",
     "start": "next start",
     "lint": "next lint",
     "export": "next export"
