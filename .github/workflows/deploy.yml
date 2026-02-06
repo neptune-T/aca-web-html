@@ -51,6 +51,8 @@ jobs:
         run: |
           echo "== out/.nojekyll ==" && ls -la ./out/.nojekyll
           echo "== out root (top 50) ==" && ls -la ./out | head -n 50
+          echo "== out/models ==" && ls -la ./out/models || true
+          echo "== out/models/bunny.ply ==" && ls -la ./out/models/bunny.ply || true
           echo "== out/_next/static (top) ==" && ls -la ./out/_next/static | head -n 50
           echo "== out/_next/static/css (top) ==" && ls -la ./out/_next/static/css | head -n 50
           

@@ -1,5 +1,48 @@
+let cachedRuntimeBasePath: string | null = null;
+
+function normalizeBasePath(input: string): string {
+  if (!input) return '';
+  if (input === '/') return '';
+  return input.endsWith('/') ? input.slice(0, -1) : input;
+}
+
+/**
+ * 在浏览器端尽量“自愈”地推断 basePath：
+ * 从页面里某个 `/_next/static/...` script/link 的路径前缀提取出来。
+ * 这样就算 CI 环境变量没对齐，也不会把资源路径拼错。
+ */
 export function getBasePath(): string {
-  return process.env.NEXT_PUBLIC_BASE_PATH || '';
+  if (cachedRuntimeBasePath !== null) return cachedRuntimeBasePath;
+
+  const envBasePath = normalizeBasePath(process.env.NEXT_PUBLIC_BASE_PATH || '');
+  if (typeof document === 'undefined') {
+    cachedRuntimeBasePath = envBasePath;
+    return cachedRuntimeBasePath;
+  }
+
+  try {
+    const scripts = Array.from(document.querySelectorAll('script[src]')) as HTMLScriptElement[];
+    const links = Array.from(document.querySelectorAll('link[href]')) as HTMLLinkElement[];
+    const candidates = [
+      ...scripts.map((s) => s.src).filter(Boolean),
+      ...links.map((l) => l.href).filter(Boolean),
+    ];
+
+    for (const urlStr of candidates) {
+      const u = new URL(urlStr, window.location.origin);
+      const marker = '/_next/static/';
+      const idx = u.pathname.indexOf(marker);
+      if (idx >= 0) {
+        cachedRuntimeBasePath = normalizeBasePath(u.pathname.slice(0, idx));
+        return cachedRuntimeBasePath;
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  cachedRuntimeBasePath = envBasePath;
+  return cachedRuntimeBasePath;
 }
 
 /**

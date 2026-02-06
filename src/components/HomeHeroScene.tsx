@@ -9,6 +9,35 @@ import { withBasePath } from '@/lib/basePath';
 
 const BUNNY_PLY_URL = withBasePath('/models/bunny.ply');
 
+class SceneErrorBoundary extends React.Component<
+  { url: string; children: React.ReactNode },
+  { hasError: boolean; message?: string }
+> {
+  state: { hasError: boolean; message?: string } = { hasError: false };
+
+  static getDerivedStateFromError(err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return { hasError: true, message: msg };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <Html center>
+          <div className="max-w-[260px] text-white font-mono text-xs bg-black/60 p-3 rounded-lg border border-white/10 backdrop-blur-sm">
+            <div className="font-bold mb-1">MODEL LOAD FAILED</div>
+            <div className="opacity-80 break-all">{this.props.url}</div>
+            {this.state.message && (
+              <div className="mt-2 opacity-60 break-words">{this.state.message}</div>
+            )}
+          </div>
+        </Html>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function InteractiveBunny({ url }: { url: string }) {
   const geometry = useLoader(PLYLoader, url) as THREE.BufferGeometry;
   const shaderRef = useRef<THREE.ShaderMaterial>(null);
@@ -193,7 +222,15 @@ export default function HomeHeroScene({ isDarkMode }: { isDarkMode: boolean }) {
       <color attach="background" args={[isDarkMode ? '#101010' : '#ffffff']} />
       <OrbitControls enableZoom={false} enablePan={false} minDistance={2} maxDistance={5} rotateSpeed={0.5} />
       <React.Suspense fallback={<LoadingBunny />}>
-        <Center>{isDarkMode ? <InteractiveBunny url={BUNNY_PLY_URL} /> : <SolarSystem />}</Center>
+        <Center>
+          {isDarkMode ? (
+            <SceneErrorBoundary url={BUNNY_PLY_URL}>
+              <InteractiveBunny url={BUNNY_PLY_URL} />
+            </SceneErrorBoundary>
+          ) : (
+            <SolarSystem />
+          )}
+        </Center>
       </React.Suspense>
     </Canvas>
   );
