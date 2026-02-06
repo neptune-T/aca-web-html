@@ -32,7 +32,11 @@ jobs:
         
       - name: Build
         run: npm run build
-        # 用户主页仓库（username.github.io）部署在根路径，不需要 basePath
+        env:
+          # GitHub Pages:
+          # - 用户主页仓库：<owner>.github.io -> 根路径（空 basePath）
+          # - 项目仓库：/repoName -> 需要 basePath=/repoName
+          NEXT_PUBLIC_BASE_PATH: ${{ github.event.repository.name == format('{0}.github.io', github.repository_owner) && '' || format('/{0}', github.event.repository.name) }}
           
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
