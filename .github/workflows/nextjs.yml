@@ -2,15 +2,20 @@
 #
 # To get started with Next.js see: https://nextjs.org/docs/getting-started
 #
-name: Deploy Next.js site to Pages
+name: Deploy Next.js site to Pages (legacy)
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ["main"]
+    branches: ["__disabled__"]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+
+# 这个 workflow 与 deploy.yml 重复；保留文件但禁用触发，避免重复部署。
+# 如需启用，请删除下面这一行并移除 deploy.yml。
+  # (disabled) push:
+  #   branches: ["__disabled__"]
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
